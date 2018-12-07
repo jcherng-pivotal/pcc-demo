@@ -1,0 +1,8 @@
+---
+applications:
+- name: pcc-demo-client-dev
+  memory: 2G
+  services:
+  - pcc-demo-dev
+  env:
+    SPRING_PROFILES_ACTIVE: dev

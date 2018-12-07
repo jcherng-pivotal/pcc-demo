@@ -1,0 +1,217 @@
+---
+resources:
+- name: pcc-demo-git
+  type: git
+  source:
+    uri: {{git-uri}}
+    branch: ((git-branch))
+
+- name: pcc-demo-dev-cf
+  type: cf
+  source:
+    api: {{cf-api}}
+    username: {{cf-username}}
+    password: {{cf-password}}
+    organization: {{cf-org}}
+    space: {{cf-space-dev}}
+    skip_cert_check: false
+
+- name: pcc-demo-prod-cf
+  type: cf
+  source:
+    api: {{cf-api}}
+    username: {{cf-username}}
+    password: {{cf-password}}
+    organization: {{cf-org}}
+    space: {{cf-space-prod}}
+    skip_cert_check: false
+
+- name: pcc-demo-client-snapshot-version-s3
+  type: semver
+  source:
+    bucket: pcc-demo-client-version
+    key: snapshot-version
+    access_key_id: {{s3-access-key-id}}
+    secret_access_key: {{s3-secret-access-key}}
+    endpoint: {{s3-endpoint}}
+    disable_ssl: true
+    initial_version: 1.0.0
+
+- name: pcc-demo-client-rc-version-s3
+  type: semver
+  source:
+    bucket: pcc-demo-client-version
+    key: rc-version
+    access_key_id: {{s3-access-key-id}}
+    secret_access_key: {{s3-secret-access-key}}
+    endpoint: {{s3-endpoint}}
+    disable_ssl: true
+    initial_version: 1.0.0
+
+- name: pcc-demo-client-snapshot-s3
+  type: s3
+  source:
+    bucket: pcc-demo-client-snapshot
+    regexp: pcc-demo-client-(.*).jar
+    access_key_id: {{s3-access-key-id}}
+    secret_access_key: {{s3-secret-access-key}}
+    endpoint: {{s3-endpoint}}
+
+- name: pcc-demo-client-rc-s3
+  type: s3
+  source:
+    bucket: pcc-demo-client-rc
+    regexp: pcc-demo-client-(.*).jar
+    access_key_id: {{s3-access-key-id}}
+    secret_access_key: {{s3-secret-access-key}}
+    endpoint: {{s3-endpoint}}
+
+- name: pcc-demo-client-release-s3
+  type: s3
+  source:
+    bucket: pcc-demo-client-release
+    regexp: pcc-demo-client-(.*).jar
+    access_key_id: {{s3-access-key-id}}
+    secret_access_key: {{s3-secret-access-key}}
+    endpoint: {{s3-endpoint}}
+
+jobs:
+- name: test-build
+  serial_groups: [version]
+  plan:
+  - aggregate:
+    - get: repo
+      resource: pcc-demo-git
+      trigger: true
+    - get: version
+      resource: pcc-demo-client-snapshot-version-s3
+      params: {pre: SNAPSHOT}
+  - task: build
+    file: repo/ci/tasks/build.yml
+    params:
+      PROJECT_TYPE: {{project-type}}
+  - put: artifact
+    resource: pcc-demo-client-snapshot-s3
+    params:
+      file: artifacts/pcc-demo-client-*.jar
+  - put: version
+    resource: pcc-demo-client-snapshot-version-s3
+    params:
+      file: version/number
+
+- name: deploy-dev
+  serial_groups: [version]
+  plan:
+  - aggregate:
+    - get: repo
+      resource: pcc-demo-git
+      passed: [test-build]
+    - get: artifact
+      resource: pcc-demo-client-snapshot-s3
+      passed: [test-build]
+      trigger: true
+    - get: version
+      resource: pcc-demo-client-rc-version-s3
+      params: {pre: RC}
+  - put: cf
+    resource: pcc-demo-dev-cf
+    params:
+      manifest: repo/client/manifests/dev_manifest.yml
+      path: artifact/pcc-demo-client-*.jar
+      current_app_name: pcc-demo-client-dev
+  - task: update-version
+    file: repo/ci/tasks/update-version.yml
+  - put: post-artifact
+    resource: pcc-demo-client-rc-s3
+    params:
+      file: post-artifact/pcc-demo-client-*.jar
+  - put: version
+    resource: pcc-demo-client-rc-version-s3
+    params:
+      file: version/number
+
+- name: deploy-prod
+  serial_groups: [version]
+  plan:
+  - aggregate:
+    - get: repo
+      resource: pcc-demo-git
+      passed: [deploy-dev]
+    - get: artifact
+      resource: pcc-demo-client-rc-s3
+      passed: [deploy-dev]
+    - get: version
+      resource: pcc-demo-client-rc-version-s3
+      params: {bump: final}
+      passed: [deploy-dev]
+  - put: cf
+    resource: pcc-demo-prod-cf
+    params:
+      manifest: repo/client/manifests/prod_manifest.yml
+      path: artifact/pcc-demo-client-*.jar
+      current_app_name: pcc-demo-client
+  - task: update-version
+    file: repo/ci/tasks/update-version.yml
+  - put: prod-artifact
+    resource: pcc-demo-client-release-s3
+    params:
+      file: post-artifact/pcc-demo-client-*.jar
+  - aggregate:
+    - put: snapshot-version
+      resource: pcc-demo-client-snapshot-version-s3
+      params:
+        file: version/number
+    - put: rc-version
+      resource: pcc-demo-client-rc-version-s3
+      params:
+        file: version/number
+
+- name: bump-major
+  serial_groups: [version]
+  plan:
+  - aggregate:
+    - put: pcc-demo-client-snapshot-version-s3
+      params: {bump: major}
+    - put: pcc-demo-client-rc-version-s3
+      params: {bump: major}
+
+- name: bump-minor
+  serial_groups: [version]
+  plan:
+  - aggregate:
+    - put: pcc-demo-client-snapshot-version-s3
+      params: {bump: minor}
+    - put: pcc-demo-client-rc-version-s3
+      params: {bump: minor}
+
+- name: bump-patch
+  serial_groups: [version]
+  plan:
+  - aggregate:
+    - get: snapshot-version
+      resource: pcc-demo-client-snapshot-version-s3
+    - get: rc-version
+      resource: pcc-demo-client-rc-version-s3
+      passed: [deploy-prod]
+      trigger: true
+  - aggregate:
+    - put: snapshot-version
+      resource: pcc-demo-client-snapshot-version-s3
+      params: {bump: patch}
+    - put: rc-version
+      resource: pcc-demo-client-rc-version-s3
+      params: {bump: patch}
+
+groups:
+- name: pcc demo client
+  jobs:
+  - test-build
+  - deploy-dev
+  - deploy-prod
+  - bump-patch
+
+- name: version management
+  jobs:
+  - bump-major
+  - bump-minor
+  - bump-patch

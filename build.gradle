@@ -1,0 +1,59 @@
+buildscript {
+	ext {
+		springBootVersion = '2.1.0.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+allprojects {
+	apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+
+	dependencyManagement {
+		imports {
+			mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+		}
+
+        dependencies {
+            dependency 'org.springframework.geode:spring-gemfire-starter:1.0.0.M3'
+			dependency 'org.springframework.shell:spring-shell:1.2.0.RELEASE'
+			dependency 'io.pivotal.gemfire:geode-core:9.6.0'
+            dependency 'io.pivotal.gemfire:geode-cq:9.6.0'
+            dependency 'io.pivotal.gemfire:geode-lucene:9.6.0'
+            dependency 'io.pivotal.gemfire:geode-wan:9.6.0'
+            dependency 'io.springfox:springfox-swagger2:2.9.2'
+            dependency 'io.springfox:springfox-swagger-ui:2.9.2'
+            dependency 'org.projectlombok:lombok:1.18.4'
+            dependency 'org.mapstruct:mapstruct-processor:1.2.0.Final'
+            dependency 'org.mapstruct:mapstruct-jdk8:1.2.0.Final'
+        }
+	}
+}
+
+subprojects {
+	apply plugin: 'java'
+
+	group = 'io.pivotal.demo.pcc'
+
+	sourceCompatibility = 1.8
+
+	repositories {
+		mavenCentral()
+		maven { url "https://repo.spring.io/libs-snapshot" }
+	}
+	
+	task wrapper{
+	}
+
+    configurations.all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-slf4j-impl'
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    }
+}

@@ -1,0 +1,13 @@
+rootProject.name = 'pcc-demo'
+
+include 'client'
+include 'server'
+include 'function'
+include 'repository'
+include 'model'
+
+project(":client").name = "pcc-demo-client"
+project(":server").name = "pcc-demo-server"
+project(":function").name = "pcc-demo-function"
+project(":repository").name = "pcc-demo-repository"
+project(":model").name = "pcc-demo-model"
