@@ -3,7 +3,6 @@ package io.pivotal.demo.pcc.repository.gf;
 import io.pivotal.demo.pcc.model.gf.pdx.Customer;
 import io.pivotal.demo.pcc.model.gf.pdx.CustomerOrder;
 import io.pivotal.demo.pcc.model.gf.pdx.Item;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,7 +1,7 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-    implementation project(':pcc-demo-model'), project(':pcc-demo-repository'), project(':pcc-demo-function')
+    implementation project(':pcc-demo-model'), project(':pcc-demo-repository')
     
     annotationProcessor 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'

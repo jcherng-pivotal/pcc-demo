@@ -1,5 +1,6 @@
 package io.pivotal.demo.pcc.client.controller;
 
+import io.pivotal.demo.pcc.client.function.CustomerOrderFunction;
 import io.pivotal.demo.pcc.model.gf.pdx.Customer;
 import io.pivotal.demo.pcc.model.gf.pdx.CustomerOrder;
 import io.pivotal.demo.pcc.model.gf.pdx.Item;
@@ -7,11 +8,8 @@ import io.pivotal.demo.pcc.model.io.CustomerOrderIO;
 import io.pivotal.demo.pcc.repository.gf.CustomerOrderRepository;
 import io.pivotal.demo.pcc.repository.gf.CustomerRepository;
 import io.pivotal.demo.pcc.repository.gf.ItemRepository;
-import io.pivotal.demo.pcc.server.function.CustomerOrderListFunction;
-import org.apache.geode.cache.DataPolicy;
-import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.cache.Region;
-import org.springframework.data.gemfire.function.execution.GemfireOnRegionFunctionTemplate;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,55 +17,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
+@Slf4j
+@AllArgsConstructor
 @RestController
 public class LoadController {
-
-    private final GemFireCache gemFireCache;
-
     private final CustomerRepository customerRepository;
 
     private final CustomerOrderRepository customerOrderRepository;
 
     private final ItemRepository itemRepository;
 
-    private final Region<String, Customer> customerRegion;
+    private final CustomerOrderFunction customerOrderFunction;
 
-    private final Region<String, CustomerOrder> customerOrderRegion;
-
-    private final Region<String, Item> itemRegion;
-
-    private final GemfireOnRegionFunctionTemplate customerOrderRegionFunctionTemplate;
-
-    public LoadController(GemFireCache gemFireCache,
-                          CustomerRepository customerRepository,
-                          CustomerOrderRepository customerOrderRepository,
-                          ItemRepository itemRepository,
-                          GemfireOnRegionFunctionTemplate customerOrderRegionFunctionTemplate) {
-        this.gemFireCache = gemFireCache;
-        this.customerRepository = customerRepository;
-        this.customerOrderRepository = customerOrderRepository;
-        this.itemRepository = itemRepository;
-
-        this.customerOrderRegionFunctionTemplate = customerOrderRegionFunctionTemplate;
-
-        customerRegion = gemFireCache.getRegion("customer");
-        customerOrderRegion = gemFireCache.getRegion("customer-order");
-        itemRegion = gemFireCache.getRegion("item");
-    }
 
     @RequestMapping(value = "/clearData", method = RequestMethod.POST)
     public void clearDate() {
-        Set<String> customerKeySet = (DataPolicy.EMPTY.equals(customerRegion.getAttributes().getDataPolicy()))
-                ? customerRegion.keySetOnServer() : customerRegion.keySet();
-        Set<String> customerOrderKeySet = (DataPolicy.EMPTY
-                .equals(customerOrderRegion.getAttributes().getDataPolicy())) ? customerOrderRegion.keySetOnServer()
-                : customerOrderRegion.keySet();
-        Set<String> itemKeySet = (DataPolicy.EMPTY.equals(itemRegion.getAttributes().getDataPolicy()))
-                ? itemRegion.keySetOnServer() : itemRegion.keySet();
-
-        customerRegion.removeAll(customerKeySet);
-        customerOrderRegion.removeAll(customerOrderKeySet);
-        itemRegion.removeAll(itemKeySet);
+        customerRepository.deleteAll(customerRepository.findAll());
+        customerOrderRepository.deleteAll(customerOrderRepository.findAll());
+        itemRepository.deleteAll(itemRepository.findAll());
     }
 
     @RequestMapping(value = "/loadDataByRegionPutAll", method = RequestMethod.POST)
@@ -169,8 +136,8 @@ public class LoadController {
     public Iterable<CustomerOrderIO> getCustomerOrderList(@RequestParam(value = "customerId") String customerId) {
         Set<String> filter = new HashSet<>();
         filter.add(customerId + "|");
-        return customerOrderRegionFunctionTemplate
-                .execute(CustomerOrderListFunction.class.getSimpleName(), filter);
+
+        return customerOrderFunction.getCustomerOrderList(filter);
     }
 
 }
