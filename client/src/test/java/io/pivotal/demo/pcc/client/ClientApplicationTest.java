@@ -1,5 +1,6 @@
 package io.pivotal.demo.pcc.client;
 
+import io.pivotal.demo.pcc.client.config.GemFireConfig;
 import org.apache.geode.cache.GemFireCache;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,7 +12,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {ClientApplication.class})
+@SpringBootTest(classes = {GemFireConfig.class})
 public class ClientApplicationTest {
     @Autowired
     GemFireCache cache;
