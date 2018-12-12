@@ -20,15 +20,14 @@ import java.util.Set;
 public class CustomerOrderPriceFunction implements Function {
     private final GemFireCache cache;
 
-    private final Region<String, CustomerOrder> customerOrderRegion;
+    private Region<String, CustomerOrder> customerOrderRegion;
 
-    private final Region<String, Item> itemRegion;
+    private Region<String, Item> itemRegion;
+
+    private Boolean areRegionsInitialized = false;
 
     public CustomerOrderPriceFunction() {
-        super();
-        this.cache = CacheFactory.getAnyInstance();
-        this.customerOrderRegion = cache.getRegion("customer-order");
-        this.itemRegion = cache.getRegion("item");
+        this(CacheFactory.getAnyInstance());
     }
 
     public CustomerOrderPriceFunction(GemFireCache cache) {
@@ -38,9 +37,21 @@ public class CustomerOrderPriceFunction implements Function {
         this.itemRegion = cache.getRegion("item");
     }
 
+    private void initializeRegions() {
+        if (cache != null && !areRegionsInitialized) {
+            customerOrderRegion = cache.getRegion("customer-order");
+            itemRegion = cache.getRegion("item");
+
+            if (customerOrderRegion != null && itemRegion != null) {
+                areRegionsInitialized = true;
+            }
+        }
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void execute(FunctionContext fc) {
+        initializeRegions();
         if (!(fc instanceof RegionFunctionContext)) {
             throw new FunctionException(
                     "This is a data aware function, and has to be called using FunctionService.onRegion.");

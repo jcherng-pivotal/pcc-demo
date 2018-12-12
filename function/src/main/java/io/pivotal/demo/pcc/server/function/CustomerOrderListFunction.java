@@ -20,7 +20,7 @@ import java.util.*;
 
 public class CustomerOrderListFunction implements DataAwareFunction {
 
-    private GemFireCache cache;
+    private final GemFireCache cache;
 
     private Region<String, Customer> customerRegion;
 
@@ -28,17 +28,28 @@ public class CustomerOrderListFunction implements DataAwareFunction {
 
     private Region<String, Item> itemRegion;
 
+    private Boolean areRegionsInitialized = false;
+
     public CustomerOrderListFunction() {
-        super();
-        this.cache = CacheFactory.getAnyInstance();
+        this(CacheFactory.getAnyInstance());
     }
 
     public CustomerOrderListFunction(GemFireCache cache) {
         super();
         this.cache = cache;
-        this.customerRegion = cache.getRegion("customer");
-        this.customerOrderRegion = cache.getRegion("customer-order");
-        this.itemRegion = cache.getRegion("item");
+        initializeRegions();
+    }
+
+    private void initializeRegions() {
+        if (cache != null && !areRegionsInitialized) {
+            customerRegion = cache.getRegion("customer");
+            customerOrderRegion = cache.getRegion("customer-order");
+            itemRegion = cache.getRegion("item");
+
+            if (customerRegion != null && customerOrderRegion != null && itemRegion != null) {
+                areRegionsInitialized = true;
+            }
+        }
     }
 
     @Override
@@ -58,6 +69,7 @@ public class CustomerOrderListFunction implements DataAwareFunction {
     @SuppressWarnings("unchecked")
     @Override
     public void process(RegionFunctionContext regionFunctionContext) {
+        initializeRegions();
         QueryService queryService = cache.getQueryService();
         String qstr = "SELECT * FROM /customer-order";
 
