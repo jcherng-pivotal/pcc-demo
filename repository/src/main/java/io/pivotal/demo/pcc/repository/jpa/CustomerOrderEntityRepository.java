@@ -1,12 +1,11 @@
 package io.pivotal.demo.pcc.repository.jpa;
 
-import java.util.Set;
-
-import org.springframework.data.repository.CrudRepository;
-
 import io.pivotal.demo.pcc.model.jpa.CustomerEntity;
 import io.pivotal.demo.pcc.model.jpa.CustomerOrderEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CustomerOrderEntityRepository extends CrudRepository<CustomerOrderEntity, String> {
-	Set<CustomerOrderEntity> findByCustomer(CustomerEntity customer);
+import java.util.Set;
+
+public interface CustomerOrderEntityRepository extends JpaRepository<CustomerOrderEntity, String> {
+    Set<CustomerOrderEntity> findByCustomer(CustomerEntity customer);
 }

@@ -1,10 +1,8 @@
 package io.pivotal.demo.pcc.repository.gf;
 
 import io.pivotal.demo.pcc.model.gf.pdx.Customer;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.gemfire.repository.GemfireRepository;
 
-@Repository
-public interface CustomerRepository extends CrudRepository<Customer, String> {
+public interface CustomerRepository extends GemfireRepository<Customer, String> {
 
 }

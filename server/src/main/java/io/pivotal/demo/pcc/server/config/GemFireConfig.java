@@ -3,9 +3,9 @@ package io.pivotal.demo.pcc.server.config;
 import io.pivotal.demo.pcc.model.gf.pdx.Customer;
 import io.pivotal.demo.pcc.model.gf.pdx.CustomerOrder;
 import io.pivotal.demo.pcc.model.gf.pdx.Item;
-import io.pivotal.demo.pcc.server.TestSecurityManager;
 import io.pivotal.demo.pcc.server.function.CustomerOrderListFunction;
 import io.pivotal.demo.pcc.server.function.CustomerOrderPriceFunction;
+import io.pivotal.demo.pcc.server.security.TestSecurityManager;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.PartitionAttributesFactory;
 import org.apache.geode.cache.RegionAttributes;
@@ -27,8 +27,8 @@ import java.util.Arrays;
 
 @CacheServerApplication(name = "ServerApplication")
 @EnableLocator
-@EnablePdx
 @EnableManager
+@EnablePdx
 public class GemFireConfig {
 
     @Bean

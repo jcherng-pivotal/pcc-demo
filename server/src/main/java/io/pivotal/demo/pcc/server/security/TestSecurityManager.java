@@ -1,4 +1,4 @@
-package io.pivotal.demo.pcc.server;
+package io.pivotal.demo.pcc.server.security;
 
 import lombok.Data;
 import lombok.NonNull;

@@ -1,16 +1,10 @@
 package io.pivotal.demo.pcc.repository.gf;
 
 import org.apache.geode.cache.RegionShortcut;
-import org.apache.geode.cache.client.ClientRegionShortcut;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
 import org.springframework.data.gemfire.config.annotation.EnablePdx;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.repository.config.EnableGemfireRepositories;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @PeerCacheApplication
 @EnablePdx

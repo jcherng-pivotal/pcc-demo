@@ -1,11 +1,10 @@
 package io.pivotal.demo.pcc.repository.jpa;
 
+import io.pivotal.demo.pcc.model.jpa.ItemEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.Set;
 
-import org.springframework.data.repository.CrudRepository;
-
-import io.pivotal.demo.pcc.model.jpa.ItemEntity;
-
-public interface ItemEntityRepository extends CrudRepository<ItemEntity, String> {
-	Set<ItemEntity> findByName(String name);
+public interface ItemEntityRepository extends JpaRepository<ItemEntity, String> {
+    Set<ItemEntity> findByName(String name);
 }
