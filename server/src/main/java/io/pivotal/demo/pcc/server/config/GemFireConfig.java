@@ -11,6 +11,7 @@ import org.apache.geode.cache.PartitionAttributesFactory;
 import org.apache.geode.cache.RegionAttributes;
 import org.apache.geode.cache.execute.Function;
 import org.apache.geode.cache.util.StringPrefixPartitionResolver;
+import org.apache.geode.pdx.ReflectionBasedAutoSerializer;
 import org.apache.geode.security.SecurityManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -28,12 +29,17 @@ import java.util.Arrays;
 @CacheServerApplication(name = "ServerApplication")
 @EnableLocator
 @EnableManager
-@EnablePdx
+@EnablePdx(serializerBeanName = "reflectionBasedAutoSerializer")
 public class GemFireConfig {
 
     @Bean
     SecurityManager testSecurityManager(Environment environment) {
         return new TestSecurityManager(environment);
+    }
+
+    @Bean
+    ReflectionBasedAutoSerializer reflectionBasedAutoSerializer() {
+        return new ReflectionBasedAutoSerializer("io.pivotal.demo.pcc.model.*");
     }
 
     @Bean("customer")
@@ -51,13 +57,15 @@ public class GemFireConfig {
         customerOrderRegionAttributes
                 .setPartitionAttributes(new PartitionAttributesFactory<String, Object>()
                         .setPartitionResolver(new StringPrefixPartitionResolver())
+                        .setColocatedWith("customer")
                         .create());
         return customerOrderRegionAttributes;
     }
 
     @Bean("customer-order")
     PartitionedRegionFactoryBean<String, CustomerOrder> customerOrderRegion(final GemFireCache cache,
-                                                                            @Qualifier("customerOrderRegionAttributes") RegionAttributes<String, CustomerOrder> customerOrderRegionAttributes) {
+                                                                            @Qualifier("customerOrderRegionAttributes")
+                                                                                    RegionAttributes<String, CustomerOrder> customerOrderRegionAttributes) {
         PartitionedRegionFactoryBean<String, CustomerOrder> customerOrderRegion = new PartitionedRegionFactoryBean<>();
         customerOrderRegion.setCache(cache);
         customerOrderRegion.setClose(false);

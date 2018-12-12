@@ -10,7 +10,6 @@ import io.pivotal.demo.pcc.repository.gf.CustomerOrderRepository;
 import io.pivotal.demo.pcc.repository.gf.ItemRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.gemfire.function.execution.GemfireOnRegionOperations;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +22,6 @@ import java.util.stream.Collectors;
 public class CustomerOrderController {
     private final CustomerOrderRepository customerOrderRepository;
     private final ItemRepository itemRepository;
-    private final GemfireOnRegionOperations customerOrderRegionFunctionTemplate;
 
     @GetMapping("/{customerId}/orders/")
     public List<CustomerOrderIO> getCustomerOrdersByCustomerId(@PathVariable String customerId) {
@@ -55,7 +53,6 @@ public class CustomerOrderController {
         CustomerOrderIO customerOrderIO = CustomerOrderMapper.MAPPER.getCustomerOrderIO(customerOrder);
         Iterable<Item> items = itemRepository.findAllById(customerOrder.getItems());
         customerOrderIO.setItems(ItemMapper.MAPPER.getItemIOs(items));
-
         return customerOrderIO;
     }
 }
