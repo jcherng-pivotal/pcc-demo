@@ -1,29 +1,29 @@
 buildscript {
-	ext {
-		springBootVersion = '2.1.0.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    ext {
+        springBootVersion = '2.1.0.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
 allprojects {
-	apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'io.spring.dependency-management'
     apply plugin: 'eclipse'
     apply plugin: 'idea'
 
-	dependencyManagement {
-		imports {
-			mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
-		}
+    dependencyManagement {
+        imports {
+            mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        }
 
         dependencies {
             dependency 'org.springframework.geode:spring-gemfire-starter:1.0.0.M3'
-			dependency 'org.springframework.shell:spring-shell:1.2.0.RELEASE'
-			dependency 'io.pivotal.gemfire:geode-core:9.6.0'
+            dependency 'org.springframework.shell:spring-shell:1.2.0.RELEASE'
+            dependency 'io.pivotal.gemfire:geode-core:9.6.0'
             dependency 'io.pivotal.gemfire:geode-cq:9.6.0'
             dependency 'io.pivotal.gemfire:geode-lucene:9.6.0'
             dependency 'io.pivotal.gemfire:geode-wan:9.6.0'
@@ -33,23 +33,23 @@ allprojects {
             dependency 'org.mapstruct:mapstruct-processor:1.2.0.Final'
             dependency 'org.mapstruct:mapstruct-jdk8:1.2.0.Final'
         }
-	}
+    }
 }
 
 subprojects {
-	apply plugin: 'java'
+    apply plugin: 'java'
 
-	group = 'io.pivotal.demo.pcc'
+    group = 'io.pivotal.demo.pcc'
 
-	sourceCompatibility = 1.8
+    sourceCompatibility = 1.8
 
-	repositories {
-		mavenCentral()
-		maven { url "https://repo.spring.io/libs-snapshot" }
-	}
-	
-	task wrapper{
-	}
+    repositories {
+        mavenCentral()
+        maven { url "https://repo.spring.io/libs-snapshot" }
+    }
+
+    task wrapper {
+    }
 
     configurations.all {
         exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
