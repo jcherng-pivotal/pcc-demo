@@ -1,8 +1,8 @@
 package io.pivotal.demo.pcc.repository.gf;
 
-import io.pivotal.demo.pcc.model.gf.pdx.Customer;
-import io.pivotal.demo.pcc.model.gf.pdx.CustomerOrder;
-import io.pivotal.demo.pcc.model.gf.pdx.Item;
+import io.pivotal.demo.pcc.model.gf.Customer;
+import io.pivotal.demo.pcc.model.gf.CustomerOrder;
+import io.pivotal.demo.pcc.model.gf.Item;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

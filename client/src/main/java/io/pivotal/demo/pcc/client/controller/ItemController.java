@@ -1,7 +1,7 @@
 package io.pivotal.demo.pcc.client.controller;
 
 import io.pivotal.demo.pcc.client.exception.ResourceNotFoundException;
-import io.pivotal.demo.pcc.model.gf.pdx.Item;
+import io.pivotal.demo.pcc.model.gf.Item;
 import io.pivotal.demo.pcc.model.io.ItemIO;
 import io.pivotal.demo.pcc.model.mapper.ItemMapper;
 import io.pivotal.demo.pcc.repository.gf.ItemRepository;

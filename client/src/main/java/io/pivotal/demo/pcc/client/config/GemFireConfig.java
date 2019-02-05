@@ -14,7 +14,7 @@ import org.springframework.data.gemfire.repository.config.EnableGemfireRepositor
 @ClientCacheApplication
 @EnableSecurity
 @EnablePdx
-@EnableEntityDefinedRegions(basePackages = {"io.pivotal.demo.pcc.model.gf.pdx"},
+@EnableEntityDefinedRegions(basePackages = {"io.pivotal.demo.pcc.model.gf"},
         clientRegionShortcut = ClientRegionShortcut.PROXY)
 @EnableGemfireRepositories(basePackages = {"io.pivotal.demo.pcc.repository.gf"})
 public class GemFireConfig {

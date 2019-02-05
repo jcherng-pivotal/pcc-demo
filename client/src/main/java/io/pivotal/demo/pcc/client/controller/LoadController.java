@@ -1,8 +1,8 @@
 package io.pivotal.demo.pcc.client.controller;
 
-import io.pivotal.demo.pcc.model.gf.pdx.Customer;
-import io.pivotal.demo.pcc.model.gf.pdx.CustomerOrder;
-import io.pivotal.demo.pcc.model.gf.pdx.Item;
+import io.pivotal.demo.pcc.model.gf.Customer;
+import io.pivotal.demo.pcc.model.gf.CustomerOrder;
+import io.pivotal.demo.pcc.model.gf.Item;
 import io.pivotal.demo.pcc.model.io.CustomerOrderIO;
 import io.pivotal.demo.pcc.repository.gf.CustomerOrderRepository;
 import io.pivotal.demo.pcc.repository.gf.CustomerRepository;

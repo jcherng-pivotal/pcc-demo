@@ -1,6 +1,6 @@
 package io.pivotal.demo.pcc.model.mapper;
 
-import io.pivotal.demo.pcc.model.gf.pdx.Item;
+import io.pivotal.demo.pcc.model.gf.Item;
 import io.pivotal.demo.pcc.model.io.ItemIO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

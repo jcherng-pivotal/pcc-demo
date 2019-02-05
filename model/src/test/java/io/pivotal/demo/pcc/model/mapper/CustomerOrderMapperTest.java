@@ -1,6 +1,6 @@
 package io.pivotal.demo.pcc.model.mapper;
 
-import io.pivotal.demo.pcc.model.gf.pdx.CustomerOrder;
+import io.pivotal.demo.pcc.model.gf.CustomerOrder;
 import io.pivotal.demo.pcc.model.io.CustomerOrderIO;
 import io.pivotal.demo.pcc.model.io.ItemIO;
 import org.junit.Test;

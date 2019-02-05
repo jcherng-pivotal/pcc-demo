@@ -1,7 +1,7 @@
 package io.pivotal.demo.pcc.server.function;
 
-import io.pivotal.demo.pcc.model.gf.pdx.CustomerOrder;
-import io.pivotal.demo.pcc.model.gf.pdx.Item;
+import io.pivotal.demo.pcc.model.gf.CustomerOrder;
+import io.pivotal.demo.pcc.model.gf.Item;
 import org.apache.geode.cache.CacheFactory;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
