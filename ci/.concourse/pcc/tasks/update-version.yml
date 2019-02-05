@@ -6,12 +6,13 @@ image_resource:
     repository: centos
     tag: latest
 inputs:
-  - name: repo
+  - name: ci-repo
   - name: version
-  - name: artifact
+  - name: pcc-demo-model
+  - name: pcc-demo-function
 outputs:
-  - name: post-artifact
+  - name: post-artifacts
 run:
   path: /bin/bash
   args:
-    - repo/ci/tasks/update-version.sh
+    - ci-repo/ci/.concourse/pcc/tasks/update-version.sh

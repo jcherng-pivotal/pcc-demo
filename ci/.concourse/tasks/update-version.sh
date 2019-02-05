@@ -1,6 +1,5 @@
-#!/bin/bash
-set -e
-set -x
+#!/usr/bin/env bash
+set -eux
 
 VERSION=$(cat version/number)
 FILE_NAME=$(cd artifact && ls *-*-*.*)

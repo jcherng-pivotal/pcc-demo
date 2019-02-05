@@ -1,0 +1,18 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: centos
+    tag: latest
+inputs:
+  - name: ci-repo
+  - name: pcc-demo-model
+  - name: pcc-demo-function
+  - name: mapstruct
+outputs:
+  - name: artifacts
+run:
+  path: /bin/bash
+  args:
+    - ci-repo/ci/.concourse/pcc/tasks/stage-artifacts.sh

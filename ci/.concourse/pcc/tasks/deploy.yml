@@ -1,0 +1,21 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: 192.168.50.4:5000/pivotal/gemfire
+    tag: 9.6.0
+    insecure_registries:
+      - 192.168.50.4:5000
+inputs:
+  - name: pcc-script-repo
+  - name: ci-repo
+  - name: artifacts
+params:
+  PCC_URL:
+  PCC_USER:
+  PCC_PASSWORD:
+run:
+  path: /bin/bash
+  args:
+    - ci-repo/ci/.concourse/pcc/tasks/deploy.sh

@@ -1,0 +1,2 @@
+undeploy
+deploy --dir=${JARS_DIR}

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 function buildGradle() {
     ./gradlew clean build -Pversion=${2}
     cp */build/libs/*.jar ../${1}/

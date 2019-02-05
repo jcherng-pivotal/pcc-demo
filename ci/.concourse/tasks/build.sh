@@ -1,9 +1,8 @@
-#!/bin/bash
-set -e
-set -x
+#!/usr/bin/env bash
+set -ex
 
 export ROOT_FOLDER=$( pwd )
-export REPO=repo
+export REPO=code-repo
 export ARTIFACTS=artifacts
 export VERSION=$(cat version/number)
 

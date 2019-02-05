@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 M2_HOME=${HOME}/.m2
 mkdir -p ${M2_HOME}

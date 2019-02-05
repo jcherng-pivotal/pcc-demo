@@ -1,0 +1,450 @@
+---
+resource_types:
+  - name: pivnet
+    type: docker-image
+    source:
+      repository: pivotalcf/pivnet-resource
+      tag: latest-final
+
+resources:
+  - name: code-git
+    type: git
+    source:
+      uri: ((git-uri))
+      branch: ((git-branch))
+      paths:
+        - model/
+        - function/
+
+  - name: pcc-script-git
+    type: git
+    source:
+      uri: ((git-uri))
+      branch: ((git-branch))
+      paths:
+        - db/pcc/
+
+  - name: ci-git
+    type: git
+    source:
+      uri: ((git-uri))
+      branch: ((git-branch))
+      paths:
+        - ci/.concourse/pcc
+        - ci/.concourse/tasks
+
+  - name: pivotal-gemfire-pivnet
+    type: pivnet
+    source:
+      api_token: ((pivnet-api-token))
+      product_slug: pivotal-gemfire
+      product_version: 9\.6\.0
+
+  - name: pivotal-gemfire-docker-image
+    type: docker-image
+    source:
+      repository: 192.168.50.4:5000/pivotal/gemfire
+      insecure_registries:
+        - 192.168.50.4:5000
+
+  - name: pcc-artifact-snapshot-version-s3
+    type: semver
+    source:
+      bucket: pcc-artifact-version
+      key: snapshot-version
+      access_key_id: ((s3-access-key-id))
+      secret_access_key: ((s3-secret-access-key))
+      endpoint: ((s3-endpoint))
+      disable_ssl: true
+      initial_version: 1.0.0
+
+  - name: pcc-artifact-rc-version-s3
+    type: semver
+    source:
+      bucket: pcc-artifact-version
+      key: rc-version
+      access_key_id: ((s3-access-key-id))
+      secret_access_key: ((s3-secret-access-key))
+      endpoint: ((s3-endpoint))
+      disable_ssl: true
+      initial_version: 1.0.0
+
+  - name: pcc-demo-model-snapshot-s3
+    type: s3
+    source:
+      bucket: pcc-artifact-snapshot
+      regexp: pcc-demo-model-(.*).jar
+      access_key_id: ((s3-access-key-id))
+      secret_access_key: ((s3-secret-access-key))
+      endpoint: ((s3-endpoint))
+
+  - name: pcc-demo-function-snapshot-s3
+    type: s3
+    source:
+      bucket: pcc-artifact-snapshot
+      regexp: pcc-demo-function-(.*).jar
+      access_key_id: ((s3-access-key-id))
+      secret_access_key: ((s3-secret-access-key))
+      endpoint: ((s3-endpoint))
+
+  - name: pcc-demo-model-rc-s3
+    type: s3
+    source:
+      bucket: pcc-artifact-rc
+      regexp: pcc-demo-model-(.*).jar
+      access_key_id: ((s3-access-key-id))
+      secret_access_key: ((s3-secret-access-key))
+      endpoint: ((s3-endpoint))
+
+  - name: pcc-demo-function-rc-s3
+    type: s3
+    source:
+      bucket: pcc-artifact-rc
+      regexp: pcc-demo-function-(.*).jar
+      access_key_id: ((s3-access-key-id))
+      secret_access_key: ((s3-secret-access-key))
+      endpoint: ((s3-endpoint))
+
+  - name: pcc-demo-model-release-s3
+    type: s3
+    source:
+      bucket: pcc-artifact-release
+      regexp: pcc-demo-model-(.*).jar
+      access_key_id: ((s3-access-key-id))
+      secret_access_key: ((s3-secret-access-key))
+      endpoint: ((s3-endpoint))
+
+  - name: pcc-demo-function-release-s3
+    type: s3
+    source:
+      bucket: pcc-artifact-release
+      regexp: pcc-demo-function-(.*).jar
+      access_key_id: ((s3-access-key-id))
+      secret_access_key: ((s3-secret-access-key))
+      endpoint: ((s3-endpoint))
+
+  - name: mapstruct-s3
+    type: s3
+    source:
+      bucket: pcc-artifact-release
+      regexp: mapstruct-(.*).jar
+      access_key_id: ((s3-access-key-id))
+      secret_access_key: ((s3-secret-access-key))
+      endpoint: ((s3-endpoint))
+
+jobs:
+  - name: publish-pivotal-gemfire-docker-image
+    plan:
+      - aggregate:
+          - get: ci-repo
+            resource: ci-git
+          - get: pivnet
+            resource: pivotal-gemfire-pivnet
+      - task: stage-pivnet
+        file: ci-repo/ci/.concourse/pcc/tasks/stage-pivnet.yml
+      - put: pivotal-gemfire-docker-image
+        params:
+          build: .
+          dockerfile: ci-repo/ci/docker/pivotal-gemfire/Dockerfile
+          tag_file: pivotal-gemfire/version
+
+  - name: test-build
+    serial_groups: [version]
+    plan:
+      - aggregate:
+          - get: code-repo
+            resource: code-git
+            trigger: true
+          - get: ci-repo
+            resource: ci-git
+          - get: version
+            resource: pcc-artifact-snapshot-version-s3
+            params: {pre: SNAPSHOT}
+          - get: rc-version
+            resource: pcc-artifact-rc-version-s3
+          - get: pivotal-gemfire-docker-image
+            passed: [publish-pivotal-gemfire-docker-image]
+      - task: build
+        file: ci-repo/ci/.concourse/tasks/build.yml
+        params:
+          PROJECT_TYPE: ((project-type))
+      - aggregate:
+          - put: artifact
+            resource: pcc-demo-model-snapshot-s3
+            params:
+              file: artifacts/pcc-demo-model-*.jar
+          - put: artifact
+            resource: pcc-demo-function-snapshot-s3
+            params:
+              file: artifacts/pcc-demo-function-*.jar
+      - put: version
+        resource: pcc-artifact-snapshot-version-s3
+        params:
+          file: version/number
+
+  - name: deploy-dev
+    serial_groups: [version, dev]
+    plan:
+      - aggregate:
+          - get: pcc-script-repo
+            resource: pcc-script-git
+            trigger: true
+          - get: ci-repo
+            resource: ci-git
+          - get: pcc-demo-model
+            resource: pcc-demo-model-snapshot-s3
+            passed: [test-build]
+          - get: pcc-demo-function
+            resource: pcc-demo-function-snapshot-s3
+            passed: [test-build]
+          - get: mapstruct
+            resource: mapstruct-s3
+          - get: snapshot-version
+            resource: pcc-artifact-snapshot-version-s3
+            passed: [test-build]
+            trigger: true
+          - get: version
+            resource: pcc-artifact-rc-version-s3
+            params: {pre: RC}
+      - task: stage
+        file: ci-repo/ci/.concourse/pcc/tasks/stage-artifacts.yml
+      - task: deploy
+        file: ci-repo/ci/.concourse/pcc/tasks/deploy.yml
+        params:
+          PCC_URL: ((pcc-gfsh-url-dev))
+          PCC_USER: ((pcc-gfsh-user-dev))
+          PCC_PASSWORD: ((pcc-gfsh-password-dev))
+      - task: update-version
+        file: ci-repo/ci/.concourse/pcc/tasks/update-version.yml
+      - aggregate:
+          - put: post-pcc-demo-model
+            resource: pcc-demo-model-rc-s3
+            params:
+              file: post-artifacts/pcc-demo-model-*.jar
+          - put: post-pcc-demo-function
+            resource: pcc-demo-function-rc-s3
+            params:
+              file: post-artifacts/pcc-demo-function-*.jar
+      - put: version
+        resource: pcc-artifact-rc-version-s3
+        params:
+          file: version/number
+
+  - name: deploy-prod
+    serial_groups: [version, prod]
+    plan:
+      - aggregate:
+          - get: pcc-script-repo
+            resource: pcc-script-git
+            passed: [deploy-dev]
+          - get: ci-repo
+            resource: ci-git
+          - get: pcc-demo-model
+            resource: pcc-demo-model-rc-s3
+            passed: [deploy-dev]
+          - get: pcc-demo-function
+            resource: pcc-demo-function-rc-s3
+            passed: [deploy-dev]
+          - get: mapstruct
+            resource: mapstruct-s3
+          - get: version
+            resource: pcc-artifact-rc-version-s3
+            params: {bump: final}
+            passed: [deploy-dev]
+      - task: stage
+        file: ci-repo/ci/.concourse/pcc/tasks/stage-artifacts.yml
+      - task: deploy
+        file: ci-repo/ci/.concourse/pcc/tasks/deploy.yml
+        params:
+          PCC_URL: ((pcc-gfsh-url-prod))
+          PCC_USER: ((pcc-gfsh-user-prod))
+          PCC_PASSWORD: ((pcc-gfsh-password-prod))
+      - task: update-version
+        file: ci-repo/ci/.concourse/pcc/tasks/update-version.yml
+      - aggregate:
+          - put: post-pcc-demo-model
+            resource: pcc-demo-model-release-s3
+            params:
+              file: post-artifacts/pcc-demo-model-*.jar
+          - put: post-pcc-demo-function
+            resource: pcc-demo-function-release-s3
+            params:
+              file: post-artifacts/pcc-demo-function-*.jar
+      - aggregate:
+          - put: snapshot-version
+            resource: pcc-artifact-snapshot-version-s3
+            params:
+              file: version/number
+          - put: rc-version
+            resource: pcc-artifact-rc-version-s3
+            params:
+              file: version/number
+
+  - name: redeploy-dev
+    serial_groups: [dev]
+    plan:
+      - aggregate:
+          - get: pcc-script-repo
+            resource: pcc-script-git
+            passed: [deploy-dev]
+          - get: ci-repo
+            resource: ci-git
+          - get: pcc-demo-model
+            resource: pcc-demo-model-rc-s3
+            passed: [deploy-dev]
+          - get: pcc-demo-function
+            resource: pcc-demo-function-rc-s3
+            passed: [deploy-dev]
+          - get: mapstruct
+            resource: mapstruct-s3
+      - task: stage
+        file: ci-repo/ci/.concourse/pcc/tasks/stage-artifacts.yml
+      - task: deploy
+        file: ci-repo/ci/.concourse/pcc/tasks/deploy.yml
+        params:
+          PCC_URL: ((pcc-gfsh-url-dev))
+          PCC_USER: ((pcc-gfsh-user-dev))
+          PCC_PASSWORD: ((pcc-gfsh-password-dev))
+
+  - name: redeploy-prod
+    serial_groups: [prod]
+    plan:
+      - aggregate:
+          - get: pcc-script-repo
+            resource: pcc-script-git
+            passed: [deploy-prod]
+          - get: ci-repo
+            resource: ci-git
+          - get: pcc-demo-model
+            resource: pcc-demo-model-release-s3
+            passed: [deploy-prod]
+          - get: pcc-demo-function
+            resource: pcc-demo-function-release-s3
+            passed: [deploy-prod]
+          - get: mapstruct
+            resource: mapstruct-s3
+      - task: stage
+        file: ci-repo/ci/.concourse/pcc/tasks/stage-artifacts.yml
+      - task: deploy
+        file: ci-repo/ci/.concourse/pcc/tasks/deploy.yml
+        params:
+          PCC_URL: ((pcc-gfsh-url-prod))
+          PCC_USER: ((pcc-gfsh-user-prod))
+          PCC_PASSWORD: ((pcc-gfsh-password-prod))
+
+  - name: reset-dev
+    serial_groups: [dev]
+    plan:
+      - aggregate:
+          - get: pcc-script-repo
+            resource: pcc-script-git
+            passed: [deploy-dev]
+          - get: ci-repo
+            resource: ci-git
+          - get: pcc-demo-model
+            resource: pcc-demo-model-rc-s3
+            passed: [deploy-dev]
+          - get: pcc-demo-function
+            resource: pcc-demo-function-rc-s3
+            passed: [deploy-dev]
+          - get: mapstruct
+            resource: mapstruct-s3
+      - task: stage
+        file: ci-repo/ci/.concourse/pcc/tasks/stage-artifacts.yml
+      - task: reset
+        file: ci-repo/ci/.concourse/pcc/tasks/reset.yml
+        params:
+          PCC_URL: ((pcc-gfsh-url-dev))
+          PCC_USER: ((pcc-gfsh-user-dev))
+          PCC_PASSWORD: ((pcc-gfsh-password-dev))
+
+  - name: reset-prod
+    serial_groups: [prod]
+    plan:
+      - aggregate:
+          - get: pcc-script-repo
+            resource: pcc-script-git
+            passed: [deploy-prod]
+          - get: ci-repo
+            resource: ci-git
+          - get: pcc-demo-model
+            resource: pcc-demo-model-release-s3
+            passed: [deploy-prod]
+          - get: pcc-demo-function
+            resource: pcc-demo-function-release-s3
+            passed: [deploy-prod]
+          - get: mapstruct
+            resource: mapstruct-s3
+      - task: stage
+        file: ci-repo/ci/.concourse/pcc/tasks/stage-artifacts.yml
+      - task: reset
+        file: ci-repo/ci/.concourse/pcc/tasks/reset.yml
+        params:
+          PCC_URL: ((pcc-gfsh-url-prod))
+          PCC_USER: ((pcc-gfsh-user-prod))
+          PCC_PASSWORD: ((pcc-gfsh-password-prod))
+
+  - name: bump-major
+    serial_groups: [version]
+    plan:
+      - aggregate:
+          - put: pcc-artifact-snapshot-version-s3
+            params: {bump: major}
+          - put: pcc-artifact-rc-version-s3
+            params: {bump: major}
+
+  - name: bump-minor
+    serial_groups: [version]
+    plan:
+      - aggregate:
+          - put: pcc-artifact-snapshot-version-s3
+            params: {bump: minor}
+          - put: pcc-artifact-rc-version-s3
+            params: {bump: minor}
+
+  - name: bump-patch
+    serial_groups: [version]
+    plan:
+      - aggregate:
+          - get: snapshot-version
+            resource: pcc-artifact-snapshot-version-s3
+            passed: [deploy-prod]
+          - get: rc-version
+            resource: pcc-artifact-rc-version-s3
+            passed: [deploy-prod]
+            trigger: true
+      - aggregate:
+          - put: snapshot-version
+            resource: pcc-artifact-snapshot-version-s3
+            params: {bump: patch}
+          - put: rc-version
+            resource: pcc-artifact-rc-version-s3
+            params: {bump: patch}
+
+groups:
+  - name: artifacts
+    jobs:
+      - test-build
+      - deploy-dev
+      - deploy-prod
+      - bump-patch
+
+  - name: redploy
+    jobs:
+      - redeploy-dev
+      - redeploy-prod
+
+  - name: reset (caution)
+    jobs:
+      - reset-dev
+      - reset-prod
+
+  - name: version management
+    jobs:
+      - bump-major
+      - bump-minor
+      - bump-patch
+
+  - name: operation management
+    jobs:
+      - publish-pivotal-gemfire-docker-image

@@ -1,0 +1,3 @@
+destroy region --name=/customer-order --if-exists
+destroy region --name=/customer --if-exists
+destroy region --name=/item --if-exists

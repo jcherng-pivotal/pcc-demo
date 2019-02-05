@@ -1,0 +1,17 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: centos
+    tag: latest
+inputs:
+  - name: ci-repo
+  - name: version
+  - name: artifact
+outputs:
+  - name: post-artifact
+run:
+  path: /bin/bash
+  args:
+    - ci-repo/ci/.concourse/tasks/update-version.sh

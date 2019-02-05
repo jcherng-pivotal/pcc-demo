@@ -1,0 +1,14 @@
+create region \
+    --name=customer \
+    --type=PARTITION_REDUNDANT_PERSISTENT \
+    --if-not-exists
+create region \
+    --name=customer-order \
+    --type=PARTITION_REDUNDANT_PERSISTENT \
+    --colocated-with=/customer \
+    --partition-resolver=org.apache.geode.cache.util.StringPrefixPartitionResolver \
+    --skip-if-exists
+create region \
+    --name=item \
+    --type=PARTITION_REDUNDANT_PERSISTENT \
+    --skip-if-exists

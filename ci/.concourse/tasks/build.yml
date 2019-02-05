@@ -6,14 +6,16 @@ image_resource:
     repository: openjdk
     tag: 8-jdk
 inputs:
-  - name: repo
+  - name: code-repo
+  - name: ci-repo
   - name: version
+    optional: true
 outputs:
   - name: artifacts
 run:
   path: /bin/bash
   args:
-    - repo/ci/tasks/build.sh
+    - ci-repo/ci/.concourse/tasks/build.sh
 
 caches:
   - path: gradle
