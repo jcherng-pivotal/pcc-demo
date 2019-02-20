@@ -1,6 +1,6 @@
 ---
 applications:
-- name: zpcc-demo-client
+- name: pcc-demo-client
   memory: 2G
   services:
   - pcc-demo-prod
