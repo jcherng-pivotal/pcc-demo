@@ -49,3 +49,8 @@ and run
 ```
 vagrant ssh -c "sudo salt-call state.apply"
 ```
+
+in pcc-artifact-release bucket on minio add:
+```
+mapstruct-jdk8-1.2.0.Final.jar
+```
