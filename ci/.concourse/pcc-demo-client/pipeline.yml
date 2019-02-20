@@ -7,6 +7,7 @@ resources:
       branch: ((git-branch))
       paths:
         - model/
+        - repository/
         - client/
 
   - name: ci-git

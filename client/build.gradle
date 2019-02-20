@@ -7,14 +7,11 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
     implementation 'org.springframework.geode:spring-gemfire-starter'
-//    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     
     implementation 'io.springfox:springfox-swagger2'
     implementation 'io.springfox:springfox-swagger-ui'
-    implementation 'org.apache.commons:commons-lang3'
-    implementation 'org.slf4j:log4j-over-slf4j'
-    implementation 'ch.qos.logback:logback-classic'
     
     runtime 'com.h2database:h2'
 

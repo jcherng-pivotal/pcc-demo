@@ -4,10 +4,10 @@ dependencies {
 
     annotationProcessor 'org.mapstruct:mapstruct-processor'
     compileOnly 'org.mapstruct:mapstruct-processor'
-    implementation 'org.mapstruct:mapstruct-jdk8'
+    implementation 'org.mapstruct:mapstruct'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'javax.validation:validation-api'
+//    implementation 'javax.validation:validation-api'
     implementation 'org.springframework.geode:spring-gemfire-starter'
     
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

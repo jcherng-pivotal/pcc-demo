@@ -51,7 +51,6 @@ out
 
 # Maven generated files #
 ######################
-.mvn
 target
 
 # Gradle generated files #

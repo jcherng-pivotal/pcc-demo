@@ -5,7 +5,7 @@ function buildGradle() {
 }
 
 function buildMaven() {
-    ./mvnw clean package
+    ./mvnw clean package -Drevision=${2}
     cp */target/*.jar ../${1}/
 }
 
