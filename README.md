@@ -54,3 +54,5 @@ in pcc-artifact-release bucket on minio add:
 ```
 mapstruct-jdk8-1.2.0.Final.jar
 ```
+
+asd
