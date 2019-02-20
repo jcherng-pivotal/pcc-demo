@@ -6,3 +6,4 @@ applications:
   - pcc-demo-prod
   env:
     SPRING_PROFILES_ACTIVE: prod
+  random-route: true
