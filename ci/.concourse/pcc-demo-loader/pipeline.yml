@@ -134,7 +134,7 @@ jobs:
         params:
           manifest: code-repo/loader/manifests/manifest.yml
           path: artifact/pcc-demo-loader-*.jar
-          current_app_name: pcc-demo-loader-dev
+          current_app_name: pcc-demo-loader
       - task: update-version
         file: ci-repo/ci/.concourse/tasks/update-version.yml
       - put: post-artifact

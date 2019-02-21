@@ -134,7 +134,7 @@ jobs:
         params:
           manifest: code-repo/client/manifests/manifest.yml
           path: artifact/pcc-demo-client-*.jar
-          current_app_name: pcc-demo-client-dev
+          current_app_name: pcc-demo-client
       - task: update-version
         file: ci-repo/ci/.concourse/tasks/update-version.yml
       - put: post-artifact
