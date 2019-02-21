@@ -1,0 +1,235 @@
+---
+resources:
+  - name: code-git
+    type: git
+    source:
+      uri: ((git-uri))
+      branch: ((git-branch))
+      paths:
+        - model/
+        - repository/
+        - loader/
+
+  - name: ci-git
+    type: git
+    source:
+      uri: ((git-uri))
+      branch: ((git-branch))
+      paths:
+        - ci/.concourse/tasks
+
+  - name: pcc-demo-dev-cf
+    type: cf
+    source:
+      api: {{cf-api}}
+      username: {{cf-username}}
+      password: {{cf-password}}
+      organization: {{cf-org}}
+      space: {{cf-space-dev}}
+      skip_cert_check: false
+
+  - name: pcc-demo-prod-cf
+    type: cf
+    source:
+      api: {{cf-api}}
+      username: {{cf-username}}
+      password: {{cf-password}}
+      organization: {{cf-org}}
+      space: {{cf-space-prod}}
+      skip_cert_check: false
+
+  - name: pcc-demo-loader-snapshot-version-s3
+    type: semver
+    source:
+      bucket: pcc-demo-loader-version
+      key: snapshot-version
+      access_key_id: {{s3-access-key-id}}
+      secret_access_key: {{s3-secret-access-key}}
+      endpoint: {{s3-endpoint}}
+      disable_ssl: true
+      initial_version: 1.0.0
+
+  - name: pcc-demo-loader-rc-version-s3
+    type: semver
+    source:
+      bucket: pcc-demo-loader-version
+      key: rc-version
+      access_key_id: {{s3-access-key-id}}
+      secret_access_key: {{s3-secret-access-key}}
+      endpoint: {{s3-endpoint}}
+      disable_ssl: true
+      initial_version: 1.0.0
+
+  - name: pcc-demo-loader-snapshot-s3
+    type: s3
+    source:
+      bucket: pcc-demo-loader-snapshot
+      regexp: pcc-demo-loader-(.*).jar
+      access_key_id: {{s3-access-key-id}}
+      secret_access_key: {{s3-secret-access-key}}
+      endpoint: {{s3-endpoint}}
+
+  - name: pcc-demo-loader-rc-s3
+    type: s3
+    source:
+      bucket: pcc-demo-loader-rc
+      regexp: pcc-demo-loader-(.*).jar
+      access_key_id: {{s3-access-key-id}}
+      secret_access_key: {{s3-secret-access-key}}
+      endpoint: {{s3-endpoint}}
+
+  - name: pcc-demo-loader-release-s3
+    type: s3
+    source:
+      bucket: pcc-demo-loader-release
+      regexp: pcc-demo-loader-(.*).jar
+      access_key_id: {{s3-access-key-id}}
+      secret_access_key: {{s3-secret-access-key}}
+      endpoint: {{s3-endpoint}}
+
+jobs:
+  - name: test-build
+    serial_groups: [version]
+    plan:
+      - aggregate:
+          - get: code-repo
+            resource: code-git
+            trigger: true
+          - get: ci-repo
+            resource: ci-git
+          - get: version
+            resource: pcc-demo-loader-snapshot-version-s3
+            params: {pre: SNAPSHOT}
+      - task: build
+        file: code-repo/ci/.concourse/tasks/build.yml
+        params:
+          PROJECT_TYPE: {{project-type}}
+      - put: artifact
+        resource: pcc-demo-loader-snapshot-s3
+        params:
+          file: artifacts/pcc-demo-loader-*.jar
+      - put: version
+        resource: pcc-demo-loader-snapshot-version-s3
+        params:
+          file: version/number
+
+  - name: deploy-dev
+    serial_groups: [version]
+    plan:
+      - aggregate:
+          - get: code-repo
+            resource: code-git
+            passed: [test-build]
+          - get: ci-repo
+            resource: ci-git
+          - get: artifact
+            resource: pcc-demo-loader-snapshot-s3
+            passed: [test-build]
+            trigger: true
+          - get: version
+            resource: pcc-demo-loader-rc-version-s3
+            params: {pre: RC}
+      - put: cf
+        resource: pcc-demo-dev-cf
+        params:
+          manifest: code-repo/loader/manifests/manifest.yml
+          path: artifact/pcc-demo-loader-*.jar
+          current_app_name: pcc-demo-loader-dev
+      - task: update-version
+        file: ci-repo/ci/.concourse/tasks/update-version.yml
+      - put: post-artifact
+        resource: pcc-demo-loader-rc-s3
+        params:
+          file: post-artifact/pcc-demo-loader-*.jar
+      - put: version
+        resource: pcc-demo-loader-rc-version-s3
+        params:
+          file: version/number
+
+  - name: deploy-prod
+    serial_groups: [version]
+    plan:
+      - aggregate:
+          - get: code-repo
+            resource: code-git
+            passed: [deploy-dev]
+          - get: ci-repo
+            resource: ci-git
+          - get: artifact
+            resource: pcc-demo-loader-rc-s3
+            passed: [deploy-dev]
+          - get: version
+            resource: pcc-demo-loader-rc-version-s3
+            params: {bump: final}
+            passed: [deploy-dev]
+      - put: cf
+        resource: pcc-demo-prod-cf
+        params:
+          manifest: code-repo/loader/manifests/manifest.yml
+          path: artifact/pcc-demo-loader-*.jar
+          current_app_name: pcc-demo-loader
+      - task: update-version
+        file: ci-repo/ci/.concourse/tasks/update-version.yml
+      - put: prod-artifact
+        resource: pcc-demo-loader-release-s3
+        params:
+          file: post-artifact/pcc-demo-loader-*.jar
+      - aggregate:
+          - put: snapshot-version
+            resource: pcc-demo-loader-snapshot-version-s3
+            params:
+              file: version/number
+          - put: rc-version
+            resource: pcc-demo-loader-rc-version-s3
+            params:
+              file: version/number
+
+  - name: bump-major
+    serial_groups: [version]
+    plan:
+      - aggregate:
+          - put: pcc-demo-loader-snapshot-version-s3
+            params: {bump: major}
+          - put: pcc-demo-loader-rc-version-s3
+            params: {bump: major}
+
+  - name: bump-minor
+    serial_groups: [version]
+    plan:
+      - aggregate:
+          - put: pcc-demo-loader-snapshot-version-s3
+            params: {bump: minor}
+          - put: pcc-demo-loader-rc-version-s3
+            params: {bump: minor}
+
+  - name: bump-patch
+    serial_groups: [version]
+    plan:
+      - aggregate:
+          - get: snapshot-version
+            resource: pcc-demo-loader-snapshot-version-s3
+          - get: rc-version
+            resource: pcc-demo-loader-rc-version-s3
+            passed: [deploy-prod]
+            trigger: true
+      - aggregate:
+          - put: snapshot-version
+            resource: pcc-demo-loader-snapshot-version-s3
+            params: {bump: patch}
+          - put: rc-version
+            resource: pcc-demo-loader-rc-version-s3
+            params: {bump: patch}
+
+groups:
+  - name: pcc demo loader
+    jobs:
+      - test-build
+      - deploy-dev
+      - deploy-prod
+      - bump-patch
+
+  - name: version management
+    jobs:
+      - bump-major
+      - bump-minor
+      - bump-patch
