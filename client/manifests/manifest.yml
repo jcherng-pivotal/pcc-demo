@@ -3,7 +3,5 @@ applications:
 - name: pcc-demo-client
   memory: 2G
   services:
-  - pcc-demo-prod
-  env:
-    SPRING_PROFILES_ACTIVE: prod
+  - pcc-demo
   random-route: true

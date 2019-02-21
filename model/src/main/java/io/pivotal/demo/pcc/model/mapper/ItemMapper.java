@@ -13,13 +13,13 @@ public interface ItemMapper {
 
     ItemMapper MAPPER = Mappers.getMapper(ItemMapper.class);
 
-    Item getItem(ItemIO source);
+    Item map(ItemIO source);
 
-    ItemIO getItemIO(Item source);
+    ItemIO map(Item source);
 
-    Iterable<ItemIO> getItemIOs(Iterable<Item> source);
+    Iterable<ItemIO> map(Iterable<Item> source);
 
-    default Set<String> map(Iterable<ItemIO> source) {
+    default Set<String> mapIds(Iterable<ItemIO> source) {
         Set<String> target = new HashSet<>();
         source.forEach(itemIO -> target.add(itemIO.getId()));
         return target;

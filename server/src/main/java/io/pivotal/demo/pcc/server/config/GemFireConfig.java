@@ -3,6 +3,7 @@ package io.pivotal.demo.pcc.server.config;
 import io.pivotal.demo.pcc.model.gf.Customer;
 import io.pivotal.demo.pcc.model.gf.CustomerOrder;
 import io.pivotal.demo.pcc.model.gf.Item;
+import io.pivotal.demo.pcc.server.function.ClearRegionFunction;
 import io.pivotal.demo.pcc.server.function.CustomerOrderListFunction;
 import io.pivotal.demo.pcc.server.function.CustomerOrderPriceFunction;
 import io.pivotal.demo.pcc.server.security.TestSecurityManager;
@@ -40,7 +41,7 @@ public class GemFireConfig {
     }
 
     @Bean
-    PdxSerializer reflectionBasedAutoSerializer(){
+    PdxSerializer reflectionBasedAutoSerializer() {
         // PCC's ReflectionBasedAutoSerializer is not configured with regex for classes
         PdxSerializer pdxSerializer = new ReflectionBasedAutoSerializer();
         return pdxSerializer;
@@ -89,23 +90,31 @@ public class GemFireConfig {
 
     @Bean
     FunctionServiceFactoryBean functionService(final Function customerOrderPriceFunction,
-                                               final Function customerOrderListFunction) {
+                                               final Function customerOrderListFunction,
+                                               final Function clearRegionFunction) {
         FunctionServiceFactoryBean functionService = new FunctionServiceFactoryBean();
         functionService
-                .setFunctions(Arrays.asList(new Function[]{customerOrderPriceFunction, customerOrderListFunction}));
+                .setFunctions(Arrays
+                        .asList(customerOrderPriceFunction, customerOrderListFunction, clearRegionFunction));
         return functionService;
     }
 
     @Bean
-    Function customerOrderPriceFunction(GemFireCache cache) {
+    Function customerOrderPriceFunction(final GemFireCache cache) {
         CustomerOrderPriceFunction customerOrderPriceFunction = new CustomerOrderPriceFunction(cache);
         return customerOrderPriceFunction;
     }
 
     @Bean
-    Function customerOrderListFunction(GemFireCache cache) {
+    Function customerOrderListFunction(final GemFireCache cache) {
         CustomerOrderListFunction customerOrderListFunction = new CustomerOrderListFunction(cache);
         return customerOrderListFunction;
+    }
+
+    @Bean
+    Function clearRegionFunction() {
+        ClearRegionFunction clearRegionFunction = new ClearRegionFunction();
+        return clearRegionFunction;
     }
 
 }

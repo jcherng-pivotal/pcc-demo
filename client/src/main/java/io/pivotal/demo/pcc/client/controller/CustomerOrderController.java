@@ -45,14 +45,14 @@ public class CustomerOrderController {
     public void updateCustomerOrderByCustomerIdAndId(@PathVariable String customerId,
                                                      @PathVariable String id,
                                                      @RequestBody CustomerOrderIO customerOrderIO) {
-        CustomerOrder customerOrder = CustomerOrderMapper.MAPPER.getCustomerOrder(customerOrderIO);
+        CustomerOrder customerOrder = CustomerOrderMapper.MAPPER.map(customerOrderIO);
         customerOrderRepository.save(customerOrder);
     }
 
     private CustomerOrderIO getCustomerOrderIO(CustomerOrder customerOrder) {
-        CustomerOrderIO customerOrderIO = CustomerOrderMapper.MAPPER.getCustomerOrderIO(customerOrder);
+        CustomerOrderIO customerOrderIO = CustomerOrderMapper.MAPPER.map(customerOrder);
         Iterable<Item> items = itemRepository.findAllById(customerOrder.getItems());
-        customerOrderIO.setItems(ItemMapper.MAPPER.getItemIOs(items));
+        customerOrderIO.setItems(ItemMapper.MAPPER.map(items));
         return customerOrderIO;
     }
 }

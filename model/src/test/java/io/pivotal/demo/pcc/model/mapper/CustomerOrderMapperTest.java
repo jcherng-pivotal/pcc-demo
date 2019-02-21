@@ -46,7 +46,7 @@ public class CustomerOrderMapperTest {
                 .items(items)
                 .build();
 
-        CustomerOrder customerOrder = CustomerOrderMapper.MAPPER.getCustomerOrder(customerOrderIO);
+        CustomerOrder customerOrder = CustomerOrderMapper.MAPPER.map(customerOrderIO);
 
         assertThat(customerOrder.getCollocatedId(), is(customerOrderIO.getCustomerId() + "|" + customerOrderIO.getId()));
         assertThat(customerOrder.getId(), is(customerOrderIO.getId()));
@@ -72,7 +72,7 @@ public class CustomerOrderMapperTest {
                 .items(items)
                 .build();
 
-        CustomerOrderIO customerOrderIO = CustomerOrderMapper.MAPPER.getCustomerOrderIO(customerOrder);
+        CustomerOrderIO customerOrderIO = CustomerOrderMapper.MAPPER.map(customerOrder);
 
         assertThat(customerOrderIO.getId(), is(customerOrder.getId()));
         assertThat(customerOrderIO.getCustomerId(), is(customerOrder.getCustomerId()));

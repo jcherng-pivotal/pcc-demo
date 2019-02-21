@@ -35,27 +35,27 @@ public class CustomerOrderEntityRepositoryTest {
 
     @Before
     public void setUp() {
-        CustomerEntity customer1 = new CustomerEntity("customer1");
+        CustomerEntity customer1 = CustomerEntity.builder().id("customer1").build();
         customer1.setName("Krikor Garegin");
         customerEntityRepository.save(customer1);
 
-        CustomerEntity customer2 = new CustomerEntity("customer2");
+        CustomerEntity customer2 = CustomerEntity.builder().id("customer2").build();
         customer2.setName("Ararat Avetis");
         customerEntityRepository.save(customer2);
 
-        ItemEntity pencil = new ItemEntity("pencil");
+        ItemEntity pencil = ItemEntity.builder().id("pencil").build();
         pencil.setName("pencil");
-        pencil.setDescription("pencil decription");
+        pencil.setDescription("pencil description");
         pencil.setPrice(new BigDecimal("0.99"));
         itemEntityRepository.save(pencil);
 
-        ItemEntity pen = new ItemEntity("pen");
+        ItemEntity pen = ItemEntity.builder().id("pen").build();
         pen.setName("pen");
         pen.setDescription("pen description");
         pen.setPrice(new BigDecimal("1.49"));
         itemEntityRepository.save(pen);
 
-        ItemEntity paper = new ItemEntity("paper");
+        ItemEntity paper = ItemEntity.builder().id("paper").build();
         paper.setName("pen");
         paper.setDescription("paper description");
         paper.setPrice(new BigDecimal("0.10"));
@@ -88,7 +88,7 @@ public class CustomerOrderEntityRepositoryTest {
 
     @Test
     public void testFindByCustomer() {
-        CustomerEntity customer1 = new CustomerEntity("customer1");
+        CustomerEntity customer1 = CustomerEntity.builder().id("customer1").build();
         customer1.setName("Krikor Garegin");
         Set<CustomerOrderEntity> customerOrderSet = customerOrderEntityRepository.findByCustomer(customer1);
         Assert.assertEquals(2, customerOrderSet.size());
@@ -97,7 +97,7 @@ public class CustomerOrderEntityRepositoryTest {
             Assert.assertNotEquals(0, order.getItemSet().size());
         }
 
-        CustomerEntity customer2 = new CustomerEntity("customer2");
+        CustomerEntity customer2 = CustomerEntity.builder().id("customer2").build();
         customer2.setName("Ararat Avetis");
         customerOrderSet = customerOrderEntityRepository.findByCustomer(customer2);
         Assert.assertEquals(1, customerOrderSet.size());

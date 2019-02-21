@@ -4,11 +4,11 @@ import java.util.Date;
 
 public class DateMapper {
 
-    public Long asLong(Date date) {
+    public Long map(Date date) {
         return date != null ? date.getTime() : null;
     }
 
-    public Date asDate(Long time) {
+    public Date map(Long time) {
         return time != null ? new Date(time) : null;
     }
 }

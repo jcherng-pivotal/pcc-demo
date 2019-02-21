@@ -132,7 +132,7 @@ jobs:
       - put: cf
         resource: pcc-demo-dev-cf
         params:
-          manifest: code-repo/client/manifests/dev_manifest.yml
+          manifest: code-repo/client/manifests/manifest.yml
           path: artifact/pcc-demo-client-*.jar
           current_app_name: pcc-demo-client-dev
       - task: update-version
@@ -165,7 +165,7 @@ jobs:
       - put: cf
         resource: pcc-demo-prod-cf
         params:
-          manifest: code-repo/client/manifests/prod_manifest.yml
+          manifest: code-repo/client/manifests/manifest.yml
           path: artifact/pcc-demo-client-*.jar
           current_app_name: pcc-demo-client
       - task: update-version

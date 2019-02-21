@@ -17,7 +17,7 @@ public class CustomerMapperTest {
                 .name("Krikor Garegin")
                 .build();
 
-        Customer customer = CustomerMapper.MAPPER.getCustomer(customerIO);
+        Customer customer = CustomerMapper.MAPPER.map(customerIO);
 
         assertThat(customer.getId(), is(customerIO.getId()));
         assertThat(customer.getName(), is(customerIO.getName()));
@@ -31,7 +31,7 @@ public class CustomerMapperTest {
                 .name("Krikor Garegin")
                 .build();
 
-        CustomerIO customerIO = CustomerMapper.MAPPER.getCustomerIO(customer);
+        CustomerIO customerIO = CustomerMapper.MAPPER.map(customer);
 
         assertThat(customerIO.getId(), is(customer.getId()));
         assertThat(customerIO.getName(), is(customer.getName()));

@@ -25,20 +25,20 @@ public class ItemEntityRepositoryTest {
 
     @Before
     public void setUp() {
-        ItemEntity pencil = new ItemEntity("pencil");
+        ItemEntity pencil = ItemEntity.builder().id("pencil").build();
         pencil.setName("pencil");
-        pencil.setDescription("pencil decription");
+        pencil.setDescription("pencil description");
         pencil.setPrice(new BigDecimal("0.99"));
         itemEntityRepository.save(pencil);
 
-        ItemEntity pen = new ItemEntity("pen");
+        ItemEntity pen = ItemEntity.builder().id("pen").build();
         pen.setName("pen");
         pen.setDescription("pen description");
         pen.setPrice(new BigDecimal("1.49"));
         itemEntityRepository.save(pen);
 
-        ItemEntity paper = new ItemEntity("paper");
-        paper.setName("pen");
+        ItemEntity paper = ItemEntity.builder().id("paper").build();
+        paper.setName("paper");
         paper.setDescription("paper description");
         paper.setPrice(new BigDecimal("0.10"));
         itemEntityRepository.save(paper);

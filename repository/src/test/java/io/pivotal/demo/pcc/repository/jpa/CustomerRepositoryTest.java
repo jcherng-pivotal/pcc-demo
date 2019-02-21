@@ -24,11 +24,11 @@ public class CustomerRepositoryTest {
 
     @Before
     public void setUp() {
-        CustomerEntity customer1 = new CustomerEntity("customer1");
+        CustomerEntity customer1 = CustomerEntity.builder().id("customer1").build();
         customer1.setName("Krikor Garegin");
         customerEntityRepository.save(customer1);
 
-        CustomerEntity customer2 = new CustomerEntity("customer2");
+        CustomerEntity customer2 = CustomerEntity.builder().id("customer2").build();
         customer2.setName("Ararat Avetis");
         customerEntityRepository.save(customer2);
     }

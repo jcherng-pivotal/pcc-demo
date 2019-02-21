@@ -13,8 +13,8 @@ public interface CustomerOrderMapper {
 
     @Mapping(target = "collocatedId", expression = "java(source.getCustomerId() + \"|\" " +
             "+ source.getId())")
-    CustomerOrder getCustomerOrder(CustomerOrderIO source);
+    CustomerOrder map(CustomerOrderIO source);
 
     @Mapping(target = "items", ignore = true)
-    CustomerOrderIO getCustomerOrderIO(CustomerOrder source);
+    CustomerOrderIO map(CustomerOrder source);
 }

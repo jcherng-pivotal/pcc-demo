@@ -21,12 +21,12 @@ public class ItemController {
         Item item = itemRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException());
-        return ItemMapper.MAPPER.getItemIO(item);
+        return ItemMapper.MAPPER.map(item);
     }
 
     @PutMapping("/{id}")
     public void updateItemById(@PathVariable String id, @RequestBody ItemIO itemIO) {
-        Item item = ItemMapper.MAPPER.getItem(itemIO);
+        Item item = ItemMapper.MAPPER.map(itemIO);
         itemRepository.save(item);
     }
 }

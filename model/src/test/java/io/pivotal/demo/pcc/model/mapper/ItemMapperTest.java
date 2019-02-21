@@ -24,7 +24,7 @@ public class ItemMapperTest {
                 .price(new BigDecimal("1.49"))
                 .build();
 
-        Item item = ItemMapper.MAPPER.getItem(itemIO);
+        Item item = ItemMapper.MAPPER.map(itemIO);
 
         assertThat(item.getId(), is(itemIO.getId()));
         assertThat(item.getName(), is(itemIO.getName()));
@@ -42,7 +42,7 @@ public class ItemMapperTest {
                 .price("1.49")
                 .build();
 
-        ItemIO itemIO = ItemMapper.MAPPER.getItemIO(item);
+        ItemIO itemIO = ItemMapper.MAPPER.map(item);
 
         assertThat(itemIO.getId(), is(item.getId()));
         assertThat(itemIO.getName(), is(item.getName()));
@@ -72,7 +72,7 @@ public class ItemMapperTest {
                 .build();
         itemIOList.add(itemIO);
 
-        Set<String> itemIdSet = ItemMapper.MAPPER.map(itemIOList);
+        Set<String> itemIdSet = ItemMapper.MAPPER.mapIds(itemIOList);
         itemIOList.stream().forEach(item -> assertThat(itemIdSet.contains(item.getId()), is(true)));
     }
 }

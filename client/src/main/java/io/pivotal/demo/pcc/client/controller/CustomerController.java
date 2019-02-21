@@ -21,13 +21,13 @@ public class CustomerController {
         Customer customer = customerRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException());
-        return CustomerMapper.MAPPER.getCustomerIO(customer);
+        return CustomerMapper.MAPPER.map(customer);
     }
 
     @PutMapping("/{id}")
     public void updateCustomerById(@PathVariable String id,
                                    @RequestBody CustomerIO customerIO) {
-        Customer customer = CustomerMapper.MAPPER.getCustomer(customerIO);
+        Customer customer = CustomerMapper.MAPPER.map(customerIO);
         customerRepository.save(customer);
     }
 }

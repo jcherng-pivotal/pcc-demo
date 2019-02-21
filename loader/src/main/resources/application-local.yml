@@ -1,0 +1,16 @@
+---
+# Spring Boot application properties that are applied when the "local" Spring profile is enabled with
+#-Dspring.profiles.active=local
+spring:
+  profiles: local
+  data:
+    gemfire:
+      security:
+        username: pcc
+        password: test
+  h2:
+    console:
+      enabled: true
+
+  datasource:
+    platform: h2

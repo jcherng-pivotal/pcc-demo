@@ -42,7 +42,7 @@ public class CustomerOrderRepositoryTest {
                 .builder()
                 .id("pencil")
                 .name("pencil")
-                .description("pencil decription")
+                .description("pencil description")
                 .price("0.99")
                 .build();
 

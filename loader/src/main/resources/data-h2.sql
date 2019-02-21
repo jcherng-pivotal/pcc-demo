@@ -1,0 +1,67 @@
+DELETE
+FROM CUSTOMER;
+
+DELETE
+FROM CUSTOMER_ORDER;
+
+DELETE
+FROM ITEM;
+
+DELETE
+FROM ORDER_ITEM;
+
+-- customer records
+INSERT INTO CUSTOMER(ID, NAME)
+VALUES ('customer1', 'Krikor Garegin');
+
+INSERT INTO CUSTOMER(ID, NAME)
+VALUES ('customer2', 'Ararat Avetis');
+
+-- item records
+INSERT INTO ITEM(ID, NAME, PRICE, DESCRIPTION)
+VALUES ('item1', 'pencil', 0.99, 'pencil decription');
+
+INSERT INTO ITEM(ID, NAME, PRICE, DESCRIPTION)
+VALUES ('item2', 'pen', 1.49, 'pen description');
+
+INSERT INTO ITEM(ID, NAME, PRICE, DESCRIPTION)
+VALUES ('item3', 'paper', 0.10, 'paper description');
+
+-- customer order records
+-- customer1 with 2 orders
+INSERT INTO CUSTOMER_ORDER(ID, CUSTOMER_ID, ORDER_DATE, SHIPPING_ADDRESS)
+VALUES ('order1', 'customer1', CURRENT_TIMESTAMP, 'address1');
+
+INSERT INTO CUSTOMER_ORDER(ID, CUSTOMER_ID, ORDER_DATE, SHIPPING_ADDRESS)
+VALUES ('order2', 'customer1', CURRENT_TIMESTAMP, 'address1');
+
+-- customer2 with 1 order
+INSERT INTO CUSTOMER_ORDER(ID, CUSTOMER_ID, ORDER_DATE, SHIPPING_ADDRESS)
+VALUES ('order3', 'customer2', CURRENT_TIMESTAMP, 'address2');
+
+-- order item records
+-- order1 with pen and paper
+INSERT INTO ORDER_ITEM(CUSTOMER_ORDER_ID, ITEM_ID)
+VALUES ('order1', 'item2');
+
+INSERT INTO ORDER_ITEM(CUSTOMER_ORDER_ID, ITEM_ID)
+VALUES ('order1', 'item3');
+
+-- order2 with pencil, pen, and paper
+INSERT INTO ORDER_ITEM(CUSTOMER_ORDER_ID, ITEM_ID)
+VALUES ('order2', 'item1');
+
+INSERT INTO ORDER_ITEM(CUSTOMER_ORDER_ID, ITEM_ID)
+VALUES ('order2', 'item2');
+
+INSERT INTO ORDER_ITEM(CUSTOMER_ORDER_ID, ITEM_ID)
+VALUES ('order2', 'item3');
+
+-- order3 with pencil and pen
+INSERT INTO ORDER_ITEM(CUSTOMER_ORDER_ID, ITEM_ID)
+VALUES ('order3', 'item1');
+
+INSERT INTO ORDER_ITEM(CUSTOMER_ORDER_ID, ITEM_ID)
+VALUES ('order3', 'item2');
+
+COMMIT;

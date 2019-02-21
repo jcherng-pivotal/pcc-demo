@@ -10,7 +10,7 @@ public interface CustomerMapper {
 
     CustomerMapper MAPPER = Mappers.getMapper(CustomerMapper.class);
 
-    Customer getCustomer(CustomerIO source);
+    Customer map(CustomerIO source);
 
-    CustomerIO getCustomerIO(Customer source);
+    CustomerIO map(Customer source);
 }

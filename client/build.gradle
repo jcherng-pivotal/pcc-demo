@@ -1,18 +1,18 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-    implementation project(':pcc-demo-model'), project(':pcc-demo-repository'), project(':pcc-demo-function')
-    
+    implementation project(':pcc-demo-model'), project(':pcc-demo-repository')
+
     annotationProcessor 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-log4j2'
     implementation 'org.springframework.geode:spring-gemfire-starter'
-    
+
     implementation 'io.springfox:springfox-swagger2'
     implementation 'io.springfox:springfox-swagger-ui'
-    
+
     runtime 'com.h2database:h2'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
