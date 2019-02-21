@@ -12,7 +12,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {GemFireConfig.class})
+@SpringBootTest
 @DirtiesContext
 public class GemFireConfigTest {
     @Autowired
