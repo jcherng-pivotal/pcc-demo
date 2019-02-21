@@ -14,19 +14,21 @@ import org.apache.geode.cache.execute.RegionFunctionContext;
 import org.apache.geode.cache.query.Query;
 import org.apache.geode.cache.query.QueryService;
 import org.apache.geode.cache.query.SelectResults;
+import org.apache.geode.pdx.PdxInstance;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CustomerOrderListFunction implements DataAwareFunction {
 
     private final GemFireCache cache;
 
-    private Region<String, Customer> customerRegion;
+    private Region<String, PdxInstance> customerRegion;
 
-    private Region<String, CustomerOrder> customerOrderRegion;
+    private Region<String, PdxInstance> customerOrderRegion;
 
-    private Region<String, Item> itemRegion;
+    private Region<String, PdxInstance> itemRegion;
 
     private Boolean areRegionsInitialized = false;
 
@@ -75,9 +77,12 @@ public class CustomerOrderListFunction implements DataAwareFunction {
 
         try {
             Query query = queryService.newQuery(qstr);
-            SelectResults<CustomerOrder> results = (SelectResults<CustomerOrder>) query
+            SelectResults<PdxInstance> results = (SelectResults<PdxInstance>) query
                     .execute(regionFunctionContext);
-            List<CustomerOrder> entryList = results.asList();
+            List<CustomerOrder> entryList = results
+                    .stream()
+                    .map(pdxInstance -> new CustomerOrder(pdxInstance))
+                    .collect(Collectors.toList());
 
             CustomerOrderIO customerOrderIO = null;
             for (CustomerOrder customerOrder : entryList) {
@@ -86,7 +91,7 @@ public class CustomerOrderListFunction implements DataAwareFunction {
                 }
 
                 if (regionFunctionContext.getFilter().contains(customerOrder.getCustomerId() + "|")) {
-                    Customer customer = customerRegion.get(customerOrder.getCustomerId());
+                    Customer customer = new Customer(customerRegion.get(customerOrder.getCustomerId()));
                     CustomerIO customerIO = new CustomerIO(customer.getId(), customer.getName());
 
                     customerOrderIO = new CustomerOrderIO();
@@ -97,7 +102,7 @@ public class CustomerOrderListFunction implements DataAwareFunction {
                     Set<ItemIO> itemIOSet = new HashSet<>();
                     Set<String> itemSet = customerOrder.getItems();
                     for (String itemId : itemSet) {
-                        Item item = itemRegion.get(itemId);
+                        Item item = new Item(itemRegion.get(itemId));
                         ItemIO itemIO = new ItemIO(itemId, item.getName(), item.getDescription(),
                                 new BigDecimal(item.getPrice()));
 

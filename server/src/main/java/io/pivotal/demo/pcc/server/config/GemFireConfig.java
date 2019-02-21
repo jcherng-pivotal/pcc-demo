@@ -11,6 +11,8 @@ import org.apache.geode.cache.PartitionAttributesFactory;
 import org.apache.geode.cache.RegionAttributes;
 import org.apache.geode.cache.execute.Function;
 import org.apache.geode.cache.util.StringPrefixPartitionResolver;
+import org.apache.geode.pdx.PdxSerializer;
+import org.apache.geode.pdx.ReflectionBasedAutoSerializer;
 import org.apache.geode.security.SecurityManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -28,12 +30,20 @@ import java.util.Arrays;
 @CacheServerApplication(name = "ServerApplication")
 @EnableLocator
 @EnableManager
-@EnablePdx
+//simulating PCC's pdx serializer configuration where readSerialized is set to true
+@EnablePdx(serializerBeanName = "reflectionBasedAutoSerializer", readSerialized = true)
 public class GemFireConfig {
 
     @Bean
     SecurityManager testSecurityManager(Environment environment) {
         return new TestSecurityManager(environment);
+    }
+
+    @Bean
+    PdxSerializer reflectionBasedAutoSerializer(){
+        // PCC's ReflectionBasedAutoSerializer is not configured with regex for classes
+        PdxSerializer pdxSerializer = new ReflectionBasedAutoSerializer();
+        return pdxSerializer;
     }
 
     @Bean("customer")

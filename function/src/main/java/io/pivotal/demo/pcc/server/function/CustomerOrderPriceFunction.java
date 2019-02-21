@@ -12,17 +12,19 @@ import org.apache.geode.cache.execute.RegionFunctionContext;
 import org.apache.geode.cache.query.Query;
 import org.apache.geode.cache.query.QueryService;
 import org.apache.geode.cache.query.SelectResults;
+import org.apache.geode.pdx.PdxInstance;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CustomerOrderPriceFunction implements Function {
     private final GemFireCache cache;
 
-    private Region<String, CustomerOrder> customerOrderRegion;
+    private Region<String, PdxInstance> customerOrderRegion;
 
-    private Region<String, Item> itemRegion;
+    private Region<String, PdxInstance> itemRegion;
 
     private Boolean areRegionsInitialized = false;
 
@@ -62,9 +64,12 @@ public class CustomerOrderPriceFunction implements Function {
 
         try {
             Query query = queryService.newQuery(qstr);
-            SelectResults<CustomerOrder> results = (SelectResults<CustomerOrder>) query
+            SelectResults<PdxInstance> results = (SelectResults<PdxInstance>) query
                     .execute(rfc);
-            List<CustomerOrder> entryList = results.asList();
+            List<CustomerOrder> entryList = results
+                    .stream()
+                    .map(pdxInstance -> new CustomerOrder(pdxInstance))
+                    .collect(Collectors.toList());
 
             BigDecimal totalPrice = null;
             for (CustomerOrder customerOrder : entryList) {
@@ -75,7 +80,7 @@ public class CustomerOrderPriceFunction implements Function {
                 if (rfc.getFilter().contains(customerOrder.getCustomerId())) {
                     Set<String> itemSet = customerOrder.getItems();
                     for (String itemId : itemSet) {
-                        Item item = itemRegion.get(itemId);
+                        Item item = new Item(itemRegion.get(itemId));
                         totalPrice = totalPrice.add(new BigDecimal(item.getPrice()));
                     }
                 }
