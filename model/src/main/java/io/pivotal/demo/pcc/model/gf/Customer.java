@@ -1,5 +1,6 @@
 package io.pivotal.demo.pcc.model.gf;
 
+import io.pivotal.demo.pcc.model.constant.RegionName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +13,7 @@ import org.springframework.data.gemfire.mapping.annotation.Region;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Region("customer")
+@Region(RegionName.CUSTOMER)
 public class Customer {
     @Id
     private String id;

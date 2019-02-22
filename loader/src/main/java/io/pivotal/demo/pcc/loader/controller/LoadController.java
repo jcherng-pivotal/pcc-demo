@@ -30,7 +30,7 @@ public class LoadController {
         Set<String> filter = new HashSet<>();
         filter.add(customerId + "|");
         return customerOrderRegionFunctionTemplate
-                .execute("CustomerOrderListFunction", filter);
+                .execute(FunctionName.CUSTOMER_ORDER_LIST_FUNCTION, filter);
     }
 
     @PostConstruct

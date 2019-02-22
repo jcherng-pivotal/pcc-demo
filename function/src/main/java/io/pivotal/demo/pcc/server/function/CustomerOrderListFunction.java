@@ -1,5 +1,7 @@
 package io.pivotal.demo.pcc.server.function;
 
+import io.pivotal.demo.pcc.model.constant.FunctionName;
+import io.pivotal.demo.pcc.model.constant.RegionName;
 import io.pivotal.demo.pcc.model.gf.Customer;
 import io.pivotal.demo.pcc.model.gf.CustomerOrder;
 import io.pivotal.demo.pcc.model.gf.Item;
@@ -44,9 +46,9 @@ public class CustomerOrderListFunction implements DataAwareFunction {
 
     private void initializeRegions() {
         if (cache != null && !areRegionsInitialized) {
-            customerRegion = cache.getRegion("customer");
-            customerOrderRegion = cache.getRegion("customer-order");
-            itemRegion = cache.getRegion("item");
+            customerRegion = cache.getRegion(RegionName.CUSTOMER_ORDER);
+            customerOrderRegion = cache.getRegion(RegionName.CUSTOMER_ORDER);
+            itemRegion = cache.getRegion(RegionName.ITEM);
 
             if (customerRegion != null && customerOrderRegion != null && itemRegion != null) {
                 areRegionsInitialized = true;
@@ -118,6 +120,10 @@ public class CustomerOrderListFunction implements DataAwareFunction {
         } catch (Exception e) {
             throw new FunctionException(e);
         }
+    }
+
+    public String getId() {
+        return FunctionName.CUSTOMER_ORDER_LIST_FUNCTION;
     }
 
 }

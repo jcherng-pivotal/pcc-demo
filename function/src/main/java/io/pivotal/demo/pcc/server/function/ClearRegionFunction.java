@@ -1,5 +1,6 @@
 package io.pivotal.demo.pcc.server.function;
 
+import io.pivotal.demo.pcc.model.constant.FunctionName;
 import lombok.extern.log4j.Log4j2;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.execute.Function;
@@ -24,7 +25,7 @@ public class ClearRegionFunction implements Function {
     }
 
     public String getId() {
-        return getClass().getSimpleName();
+        return FunctionName.CLEAR_REGION_FUNCTION;
     }
 
     public boolean optimizeForWrite() {

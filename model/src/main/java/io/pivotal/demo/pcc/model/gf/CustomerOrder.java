@@ -1,5 +1,6 @@
 package io.pivotal.demo.pcc.model.gf;
 
+import io.pivotal.demo.pcc.model.constant.RegionName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Region("customer-order")
+@Region(RegionName.CUSTOMER_ORDER)
 public class CustomerOrder {
     @Id
     private String collocatedId;

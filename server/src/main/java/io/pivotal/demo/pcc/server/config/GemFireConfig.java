@@ -1,5 +1,6 @@
 package io.pivotal.demo.pcc.server.config;
 
+import io.pivotal.demo.pcc.model.constant.RegionName;
 import io.pivotal.demo.pcc.model.gf.Customer;
 import io.pivotal.demo.pcc.model.gf.CustomerOrder;
 import io.pivotal.demo.pcc.model.gf.Item;
@@ -47,12 +48,12 @@ public class GemFireConfig {
         return pdxSerializer;
     }
 
-    @Bean("customer")
+    @Bean(RegionName.CUSTOMER_ORDER)
     PartitionedRegionFactoryBean<String, Customer> customerRegion(final GemFireCache cache) {
         PartitionedRegionFactoryBean<String, Customer> customerRegion = new PartitionedRegionFactoryBean<>();
         customerRegion.setCache(cache);
         customerRegion.setClose(false);
-        customerRegion.setName("customer");
+        customerRegion.setName(RegionName.CUSTOMER_ORDER);
         return customerRegion;
     }
 
@@ -62,29 +63,29 @@ public class GemFireConfig {
         customerOrderRegionAttributes
                 .setPartitionAttributes(new PartitionAttributesFactory<String, Object>()
                         .setPartitionResolver(new StringPrefixPartitionResolver())
-                        .setColocatedWith("customer")
+                        .setColocatedWith(RegionName.CUSTOMER_ORDER)
                         .create());
         return customerOrderRegionAttributes;
     }
 
-    @Bean("customer-order")
+    @Bean(RegionName.CUSTOMER_ORDER)
     PartitionedRegionFactoryBean<String, CustomerOrder> customerOrderRegion(final GemFireCache cache,
                                                                             @Qualifier("customerOrderRegionAttributes")
                                                                                     RegionAttributes<String, CustomerOrder> customerOrderRegionAttributes) {
         PartitionedRegionFactoryBean<String, CustomerOrder> customerOrderRegion = new PartitionedRegionFactoryBean<>();
         customerOrderRegion.setCache(cache);
         customerOrderRegion.setClose(false);
-        customerOrderRegion.setName("customer-order");
+        customerOrderRegion.setName(RegionName.CUSTOMER_ORDER);
         customerOrderRegion.setAttributes(customerOrderRegionAttributes);
         return customerOrderRegion;
     }
 
-    @Bean("item")
+    @Bean(RegionName.ITEM)
     PartitionedRegionFactoryBean<String, Item> itemRegion(final GemFireCache cache) {
         PartitionedRegionFactoryBean<String, Item> itemRegion = new PartitionedRegionFactoryBean<>();
         itemRegion.setCache(cache);
         itemRegion.setClose(false);
-        itemRegion.setName("item");
+        itemRegion.setName(RegionName.ITEM);
         return itemRegion;
     }
 

@@ -1,5 +1,6 @@
 package io.pivotal.demo.pcc.loader.config;
 
+import io.pivotal.demo.pcc.model.constant.RegionName;
 import io.pivotal.demo.pcc.model.gf.Customer;
 import io.pivotal.demo.pcc.model.gf.CustomerOrder;
 import io.pivotal.demo.pcc.model.gf.Item;
@@ -20,19 +21,19 @@ public class GemFireConfig {
 
     @Bean
     GemfireOnRegionFunctionTemplate customerRegionFunctionTemplate(
-            @Qualifier("customer") Region<String, Customer> region) {
+            @Qualifier(RegionName.CUSTOMER) Region<String, Customer> region) {
         return new GemfireOnRegionFunctionTemplate(region);
     }
 
     @Bean
     GemfireOnRegionFunctionTemplate customerOrderRegionFunctionTemplate(
-            @Qualifier("customer-order") Region<String, CustomerOrder> region) {
+            @Qualifier(RegionName.CUSTOMER_ORDER) Region<String, CustomerOrder> region) {
         return new GemfireOnRegionFunctionTemplate(region);
     }
 
     @Bean
     GemfireOnRegionFunctionTemplate itemRegionFunctionTemplate(
-            @Qualifier("item") Region<String, Item> region) {
+            @Qualifier(RegionName.ITEM) Region<String, Item> region) {
         return new GemfireOnRegionFunctionTemplate(region);
     }
 }

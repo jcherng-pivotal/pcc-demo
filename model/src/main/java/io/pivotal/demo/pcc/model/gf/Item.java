@@ -1,5 +1,6 @@
 package io.pivotal.demo.pcc.model.gf;
 
+import io.pivotal.demo.pcc.model.constant.RegionName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,13 +9,11 @@ import org.apache.geode.pdx.PdxInstance;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.gemfire.mapping.annotation.Region;
 
-import java.util.Set;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Region("item")
+@Region(RegionName.ITEM)
 public class Item {
     @Id
     private String id;

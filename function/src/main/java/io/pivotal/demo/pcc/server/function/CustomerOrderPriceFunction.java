@@ -1,5 +1,7 @@
 package io.pivotal.demo.pcc.server.function;
 
+import io.pivotal.demo.pcc.model.constant.FunctionName;
+import io.pivotal.demo.pcc.model.constant.RegionName;
 import io.pivotal.demo.pcc.model.gf.CustomerOrder;
 import io.pivotal.demo.pcc.model.gf.Item;
 import org.apache.geode.cache.CacheFactory;
@@ -35,14 +37,14 @@ public class CustomerOrderPriceFunction implements Function {
     public CustomerOrderPriceFunction(GemFireCache cache) {
         super();
         this.cache = cache;
-        this.customerOrderRegion = cache.getRegion("customer-order");
-        this.itemRegion = cache.getRegion("item");
+        this.customerOrderRegion = cache.getRegion(RegionName.CUSTOMER_ORDER);
+        this.itemRegion = cache.getRegion(RegionName.ITEM);
     }
 
     private void initializeRegions() {
         if (cache != null && !areRegionsInitialized) {
-            customerOrderRegion = cache.getRegion("customer-order");
-            itemRegion = cache.getRegion("item");
+            customerOrderRegion = cache.getRegion(RegionName.CUSTOMER_ORDER);
+            itemRegion = cache.getRegion(RegionName.ITEM);
 
             if (customerOrderRegion != null && itemRegion != null) {
                 areRegionsInitialized = true;
@@ -96,7 +98,7 @@ public class CustomerOrderPriceFunction implements Function {
 
     @Override
     public String getId() {
-        return this.getClass().getSimpleName();
+        return FunctionName.CUSTOMER_ORDER_PRICE_FUNCTION;
     }
 
     @Override

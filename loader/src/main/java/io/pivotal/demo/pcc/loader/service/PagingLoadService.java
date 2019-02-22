@@ -28,7 +28,7 @@ public interface PagingLoadService<S, T> {
 
     default Boolean clear() {
         if (DEFAULT_CLEAR_BY_FUNCTION) {
-            getRegionFunctionTemplate().execute("ClearRegionFunction");
+            getRegionFunctionTemplate().execute(FunctionName.CLEAR_REGION_FUNCTION);
         } else {
             getTargetRepository().deleteAll(getTargetRepository().findAll());
         }
