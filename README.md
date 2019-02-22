@@ -1,6 +1,6 @@
 
 ## Local CI/CD Configurations for Pivotal Cloud Cache (PCC)
-A sample project has been provided that showcases common PCC application design patterns in collaboration with DataTx engagement. In order to showcase the ease of deploying apps to Cloud Foundry that leverage PCC as fast caching layer, a sample Concourse pipeline is included and can be found [here](https://github.com/jcherng-pivotal/pcc-demo).
+A sample project has been provided that showcases common PCC application design patterns.
 
 ### Clone concourse-ci-formula for Concourse, Minio, and Vault (**All-In-One** VM)
 The concourse CI/CD pipelines configured for this demo project requires docker container and S3 buckets. For local testing, [concourse-ci-formula](https://github.com/marco-m/concourse-ci-formula) provides an easy to use all-in-one local setup by using `Vagrant` and `VirtualBox`.
