@@ -9,6 +9,8 @@ resources:
         - model/
         - repository/
         - loader/
+        - build.gradle
+        - pom.xml
 
   - name: ci-git
     type: git

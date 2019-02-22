@@ -160,6 +160,7 @@
         <module>repository</module>
         <module>function</module>
         <module>server</module>
+        <module>loader</module>
         <module>client</module>
     </modules>
 </project>
