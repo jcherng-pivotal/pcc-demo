@@ -142,6 +142,7 @@ jobs:
             resource: ci-git
           - get: pivnet
             resource: pivotal-gemfire-pivnet
+            trigger: true
       - task: stage-pivnet
         file: ci-repo/ci/.concourse/pcc/tasks/stage-pivnet.yml
       - put: pivotal-gemfire-docker-image
