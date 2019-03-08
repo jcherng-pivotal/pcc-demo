@@ -1,7 +1,7 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-    implementation project(':pcc-demo-model'), project(':pcc-demo-repository')
+    implementation project(':pcc-demo-model')
 
     annotationProcessor 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'
@@ -12,10 +12,15 @@ dependencies {
     
     implementation 'org.springframework.geode:spring-gemfire-starter'
 
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-ribbon'
+    
     implementation 'io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry'
-
+    
     implementation 'io.springfox:springfox-swagger2'
     implementation 'io.springfox:springfox-swagger-ui'
+
+    implementation 'javax.cache:cache-api'
 
     runtime 'com.h2database:h2'
 

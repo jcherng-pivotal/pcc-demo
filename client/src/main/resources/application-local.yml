@@ -8,3 +8,6 @@ spring:
       security:
         username: pcc
         password: test
+
+server:
+  port: 8080

@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>pcc-demo-client</artifactId>
+    <artifactId>pcc-demo-proxy-client</artifactId>
 
     <parent>
         <groupId>io.pivotal.demo.pcc</groupId>
@@ -42,6 +42,15 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>io.pivotal.spring.cloud</groupId>
             <artifactId>spring-cloud-services-starter-service-registry</artifactId>
         </dependency>
@@ -55,6 +64,11 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.cache</groupId>
+            <artifactId>cache-api</artifactId>
         </dependency>
 
         <dependency>
@@ -79,10 +93,6 @@
         <dependency>
             <groupId>io.pivotal.demo.pcc</groupId>
             <artifactId>pcc-demo-model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.pivotal.demo.pcc</groupId>
-            <artifactId>pcc-demo-repository</artifactId>
         </dependency>
     </dependencies>
 

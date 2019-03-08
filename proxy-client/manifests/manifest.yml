@@ -1,0 +1,7 @@
+---
+applications:
+- name: pcc-demo-client
+  memory: 2G
+  services:
+  - pcc-demo
+  random-route: true

@@ -6,6 +6,7 @@ include 'function'
 include 'server'
 include 'loader'
 include 'client'
+include 'proxy-client'
 
 project(":model").name = "pcc-demo-model"
 project(":repository").name = "pcc-demo-repository"
@@ -13,3 +14,4 @@ project(":function").name = "pcc-demo-function"
 project(":server").name = "pcc-demo-server"
 project(":loader").name = "pcc-demo-loader"
 project(":client").name = "pcc-demo-client"
+project(":proxy-client").name = "pcc-demo-proxy-client"

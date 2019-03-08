@@ -1,0 +1,14 @@
+---
+management:
+  endpoint:
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: env
+
+spring:
+  h2:
+    console:
+      enabled: true

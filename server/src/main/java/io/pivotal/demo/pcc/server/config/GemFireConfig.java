@@ -48,13 +48,13 @@ public class GemFireConfig {
         return pdxSerializer;
     }
 
-    @Bean(RegionName.CUSTOMER_ORDER)
+    @Bean(RegionName.CUSTOMER)
     PartitionedRegionFactoryBean<String, Customer> customerRegion(final GemFireCache cache) {
-        PartitionedRegionFactoryBean<String, Customer> customerRegion = new PartitionedRegionFactoryBean<>();
-        customerRegion.setCache(cache);
-        customerRegion.setClose(false);
-        customerRegion.setName(RegionName.CUSTOMER_ORDER);
-        return customerRegion;
+        PartitionedRegionFactoryBean<String, Customer> region = new PartitionedRegionFactoryBean<>();
+        region.setCache(cache);
+        region.setClose(false);
+        region.setName(RegionName.CUSTOMER);
+        return region;
     }
 
     @Bean
@@ -63,7 +63,7 @@ public class GemFireConfig {
         customerOrderRegionAttributes
                 .setPartitionAttributes(new PartitionAttributesFactory<String, Object>()
                         .setPartitionResolver(new StringPrefixPartitionResolver())
-                        .setColocatedWith(RegionName.CUSTOMER_ORDER)
+                        .setColocatedWith(RegionName.CUSTOMER)
                         .create());
         return customerOrderRegionAttributes;
     }
@@ -72,21 +72,30 @@ public class GemFireConfig {
     PartitionedRegionFactoryBean<String, CustomerOrder> customerOrderRegion(final GemFireCache cache,
                                                                             @Qualifier("customerOrderRegionAttributes")
                                                                                     RegionAttributes<String, CustomerOrder> customerOrderRegionAttributes) {
-        PartitionedRegionFactoryBean<String, CustomerOrder> customerOrderRegion = new PartitionedRegionFactoryBean<>();
-        customerOrderRegion.setCache(cache);
-        customerOrderRegion.setClose(false);
-        customerOrderRegion.setName(RegionName.CUSTOMER_ORDER);
-        customerOrderRegion.setAttributes(customerOrderRegionAttributes);
-        return customerOrderRegion;
+        PartitionedRegionFactoryBean<String, CustomerOrder> region = new PartitionedRegionFactoryBean<>();
+        region.setCache(cache);
+        region.setClose(false);
+        region.setName(RegionName.CUSTOMER_ORDER);
+        region.setAttributes(customerOrderRegionAttributes);
+        return region;
     }
 
     @Bean(RegionName.ITEM)
     PartitionedRegionFactoryBean<String, Item> itemRegion(final GemFireCache cache) {
-        PartitionedRegionFactoryBean<String, Item> itemRegion = new PartitionedRegionFactoryBean<>();
-        itemRegion.setCache(cache);
-        itemRegion.setClose(false);
-        itemRegion.setName(RegionName.ITEM);
-        return itemRegion;
+        PartitionedRegionFactoryBean<String, Item> region = new PartitionedRegionFactoryBean<>();
+        region.setCache(cache);
+        region.setClose(false);
+        region.setName(RegionName.ITEM);
+        return region;
+    }
+
+    @Bean("customer-ids-by-search-request")
+    PartitionedRegionFactoryBean<String, String> customerIdsBySearchRequestRegion(final GemFireCache cache) {
+        PartitionedRegionFactoryBean<String, String> region = new PartitionedRegionFactoryBean<>();
+        region.setCache(cache);
+        region.setClose(false);
+        region.setName("customer-ids-by-search-request");
+        return region;
     }
 
     @Bean

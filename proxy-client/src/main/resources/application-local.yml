@@ -8,12 +8,13 @@ spring:
       security:
         username: pcc
         password: test
-  h2:
-    console:
-      enabled: true
 
-  datasource:
-    platform: h2
+customer-order:
+  service:
+    name:
+      base: customer-order-service
+      suffix: 2019
+      full: ${customer-order.service.name.base} + '-' + ${customer-order.service.name.suffix}
 
 server:
-  port: 9090
+  port: 8081
